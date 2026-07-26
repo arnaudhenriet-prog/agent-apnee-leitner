@@ -1,0 +1,1002 @@
+{
+  "questions": [
+    // --- Physiologie et risques (20 questions) ---
+    {
+      "id": 1,
+      "question": "Quels sont les 3 signes avant-coureurs d'une hypoxie en apnée ?",
+      "reponse": [
+        "Vision tunnel (rétrécissement du champ visuel)",
+        "Sensation de confusion ou d'euphorie",
+        "Perte de coordination motrice (LMC)"
+      ],
+      "theme": "Physiologie",
+      "boite": 1
+    },
+    {
+      "id": 2,
+      "question": "Comment éviter un Black-Out (BO) en apnée ?",
+      "reponse": [
+        "Ne jamais forcer sa respiration après une apnée",
+        "Respecter ses limites personnelles",
+        "Plonger avec un binôme attentif",
+        "Éviter l'hyperventilation excessive"
+      ],
+      "theme": "Physiologie",
+      "boite": 1
+    },
+    {
+      "id": 3,
+      "question": "Qu'est-ce que le LMC (Loss of Motor Control) et comment réagir ?",
+      "reponse": [
+        "Le LMC est une perte de contrôle moteur due à l'hypoxie, souvent avant un BO.",
+        "Réaction : Remonter immédiatement à la surface, signaler au binôme et arrêter la session."
+      ],
+      "theme": "Physiologie",
+      "boite": 1
+    },
+    {
+      "id": 4,
+      "question": "Pourquoi faut-il éviter l'hyperventilation excessive avant une apnée ?",
+      "reponse": [
+        "Elle réduit trop le CO2 dans le sang, ce qui retarde le réflexe de respiration et augmente le risque de BO."
+      ],
+      "theme": "Physiologie",
+      "boite": 1
+    },
+    {
+      "id": 5,
+      "question": "Quel est le rôle du réflexe de plongée des mammifères ?",
+      "reponse": [
+        "Il ralentit le rythme cardiaque (bradycardie) pour économiser l'oxygène pendant l'apnée."
+      ],
+      "theme": "Physiologie",
+      "boite": 1
+    },
+    {
+      "id": 6,
+      "question": "Qu'est-ce que l'hypercapnie et pourquoi est-elle dangereuse en apnée ?",
+      "reponse": [
+        "L'hypercapnie est un excès de CO2 dans le sang, qui peut provoquer une perte de conscience soudaine."
+      ],
+      "theme": "Physiologie",
+      "boite": 1
+    },
+    {
+      "id": 7,
+      "question": "Pourquoi faut-il éviter de tenir sa respiration après être remonté à la surface ?",
+      "reponse": [
+        "Cela peut provoquer une hypoxie retardée et un BO en surface."
+      ],
+      "theme": "Physiologie",
+      "boite": 1
+    },
+    {
+      "id": 8,
+      "question": "Quels sont les effets de l'apnée sur la pression artérielle ?",
+      "reponse": [
+        "La pression artérielle augmente pendant l'apnée, ce qui peut être dangereux pour les personnes souffrant d'hypertension."
+      ],
+      "theme": "Physiologie",
+      "boite": 1
+    },
+    {
+      "id": 9,
+      "question": "Pourquoi les apnéistes doivent-ils éviter de plonger en altitude ?",
+      "reponse": [
+        "La pression atmosphérique plus faible en altitude réduit la quantité d'oxygène disponible, augmentant le risque d'hypoxie."
+      ],
+      "theme": "Physiologie",
+      "boite": 1
+    },
+    {
+      "id": 10,
+      "question": "Qu'est-ce que la syncope de profondeur et comment l'éviter ?",
+      "reponse": [
+        "C'est une perte de conscience due à la pression à grande profondeur. Pour l'éviter : limiter la profondeur et remonter progressivement."
+      ],
+      "theme": "Physiologie",
+      "boite": 1
+    },
+    {
+      "id": 11,
+      "question": "Pourquoi faut-il éviter de faire des apnées répétées sans temps de récupération ?",
+      "reponse": [
+        "Cela peut entraîner une accumulation de CO2 et une hypoxie progressive, augmentant le risque de BO."
+      ],
+      "theme": "Physiologie",
+      "boite": 1
+    },
+    {
+      "id": 12,
+      "question": "Quels sont les signes d'une hypercapnie en apnée ?",
+      "reponse": [
+        "Essoufflement, maux de tête, étourdissements, et sensation de brûlure dans les muscles."
+      ],
+      "theme": "Physiologie",
+      "boite": 1
+    },
+    {
+      "id": 13,
+      "question": "Pourquoi les apnéistes doivent-ils éviter de plonger avec un rhume ou une congestion nasale ?",
+      "reponse": [
+        "Cela rend la compensation difficile et augmente le risque de barotraumatisme."
+      ],
+      "theme": "Physiologie",
+      "boite": 1
+    },
+    {
+      "id": 14,
+      "question": "Qu'est-ce que le 'packing' en apnée et quels sont ses risques ?",
+      "reponse": [
+        "Le packing est une technique de respiration forcée pour augmenter la capacité pulmonaire. Risques : barotraumatisme, hypoxie, et BO."
+      ],
+      "theme": "Physiologie",
+      "boite": 1
+    },
+    {
+      "id": 15,
+      "question": "Pourquoi faut-il éviter de plonger en apnée après avoir bu de l'alcool ?",
+      "reponse": [
+        "L'alcool réduit les capacités de jugement, augmente le risque d'hypoxie et altère la coordination."
+      ],
+      "theme": "Physiologie",
+      "boite": 1
+    },
+    {
+      "id": 16,
+      "question": "Quels sont les effets de la fatigue sur la sécurité en apnée ?",
+      "reponse": [
+        "La fatigue réduit la capacité à compenser, augmente le risque de BO et diminue la vigilance."
+      ],
+      "theme": "Physiologie",
+      "boite": 1
+    },
+    {
+      "id": 17,
+      "question": "Pourquoi faut-il éviter de plonger en apnée avec des médicaments sédatifs ?",
+      "reponse": [
+        "Les sédatifs réduisent la vigilance et augmentent le risque de perte de conscience."
+      ],
+      "theme": "Physiologie",
+      "boite": 1
+    },
+    {
+      "id": 18,
+      "question": "Qu'est-ce que la 'samba' en apnée et comment réagir ?",
+      "reponse": [
+        "La samba est une perte de contrôle moteur due à l'hypoxie, souvent après une remontée. Réaction : aider le plongeur à rester à la surface et à respirer."
+      ],
+      "theme": "Physiologie",
+      "boite": 1
+    },
+    {
+      "id": 19,
+      "question": "Pourquoi faut-il éviter de faire des apnées statiques sans supervision ?",
+      "reponse": [
+        "Le risque de BO est élevé en apnée statique, et sans supervision, il n'y a personne pour intervenir."
+      ],
+      "theme": "Physiologie",
+      "boite": 1
+    },
+    {
+      "id": 20,
+      "question": "Quels sont les effets de l'hypothermie sur un apnéiste ?",
+      "reponse": [
+        "L'hypothermie réduit la coordination, la vigilance et augmente le risque de BO."
+      ],
+      "theme": "Physiologie",
+      "boite": 1
+    },
+
+    // --- Matériel et équipement (20 questions) ---
+    {
+      "id": 21,
+      "question": "Pourquoi utiliser un masque à faible volume en apnée ?",
+      "reponse": [
+        "Pour faciliter la compensation et réduire l'effort nécessaire pour égaliser la pression."
+      ],
+      "theme": "Matériel",
+      "boite": 1
+    },
+    {
+      "id": 22,
+      "question": "Quel type de combinaison est recommandé pour les eaux froides en apnée ?",
+      "reponse": [
+        "Une combinaison en néoprène épais (5mm à 7mm) pour maintenir la température corporelle."
+      ],
+      "theme": "Matériel",
+      "boite": 1
+    },
+    {
+      "id": 23,
+      "question": "À quoi sert un lestage adapté en apnée ?",
+      "reponse": [
+        "À atteindre une flottabilité neutre à la profondeur souhaitée, sans effort excessif."
+      ],
+      "theme": "Matériel",
+      "boite": 1
+    },
+    {
+      "id": 24,
+      "question": "Pourquoi un couteau de plongée est-il important en apnée ?",
+      "reponse": [
+        "Pour se libérer en cas d'emmêlement dans un filet ou une ligne."
+      ],
+      "theme": "Matériel",
+      "boite": 1
+    },
+    {
+      "id": 25,
+      "question": "Quels sont les critères pour choisir une ceinture de lestage en apnée ?",
+      "reponse": [
+        "Elle doit être confortable, facile à ajuster et permettre un lestage précis."
+      ],
+      "theme": "Matériel",
+      "boite": 1
+    },
+    {
+      "id": 26,
+      "question": "Pourquoi les palmes longues sont-elles recommandées en apnée ?",
+      "reponse": [
+        "Elles permettent une propulsion plus efficace avec moins d'effort."
+      ],
+      "theme": "Matériel",
+      "boite": 1
+    },
+    {
+      "id": 27,
+      "question": "Quels sont les avantages d'une monopalme par rapport à des palmes classiques ?",
+      "reponse": [
+        "La monopalme offre une meilleure efficacité énergétique et une propulsion plus puissante."
+      ],
+      "theme": "Matériel",
+      "boite": 1
+    },
+    {
+      "id": 28,
+      "question": "Pourquoi faut-il éviter d'utiliser un tuba en apnée profonde ?",
+      "reponse": [
+        "Le tuba peut causer des barotraumatismes aux poumons en profondeur."
+      ],
+      "theme": "Matériel",
+      "boite": 1
+    },
+    {
+      "id": 29,
+      "question": "Quels sont les critères pour choisir un bon ordinateur de plongée pour l'apnée ?",
+      "reponse": [
+        "Il doit afficher la profondeur, le temps d'apnée, et avoir une alarme de profondeur/BO."
+      ],
+      "theme": "Matériel",
+      "boite": 1
+    },
+    {
+      "id": 30,
+      "question": "Pourquoi faut-il vérifier régulièrement son matériel avant une session d'apnée ?",
+      "reponse": [
+        "Pour éviter les pannes (ex. : sangles de masque cassées, lestage mal fixé) qui pourraient causer un accident."
+      ],
+      "theme": "Matériel",
+      "boite": 1
+    },
+    {
+      "id": 31,
+      "question": "Quels sont les risques d'utiliser un masque avec un volume trop important en apnée ?",
+      "reponse": [
+        "Difficulté à compenser, risque de barotraumatisme, et effort accru pour égaliser."
+      ],
+      "theme": "Matériel",
+      "boite": 1
+    },
+    {
+      "id": 32,
+      "question": "Pourquoi les apnéistes utilisent-ils souvent des gants et des chaussettes en néoprène ?",
+      "reponse": [
+        "Pour se protéger du froid et améliorer l'adhérence (ex. : pour tenir le rope en apnée profonde)."
+      ],
+      "theme": "Matériel",
+      "boite": 1
+    },
+    {
+      "id": 33,
+      "question": "Quels sont les avantages d'une ceinture de lestage en caoutchouc par rapport à une ceinture en nylon ?",
+      "reponse": [
+        "Le caoutchouc est plus résistant à l'eau salée et plus durable."
+      ],
+      "theme": "Matériel",
+      "boite": 1
+    },
+    {
+      "id": 34,
+      "question": "Pourquoi faut-il éviter d'utiliser des poids en plomb non recouverts en apnée ?",
+      "reponse": [
+        "Le plomb non recouvert peut abîmer la combinaison ou la ceinture de lestage."
+      ],
+      "theme": "Matériel",
+      "boite": 1
+    },
+    {
+      "id": 35,
+      "question": "Quels sont les critères pour choisir une bonne paire de palmes en apnée ?",
+      "reponse": [
+        "Confort, rigidité adaptée à ton niveau, et efficacité de propulsion."
+      ],
+      "theme": "Matériel",
+      "boite": 1
+    },
+    {
+      "id": 36,
+      "question": "Pourquoi les apnéistes utilisent-ils des bouées de signalisation ?",
+      "reponse": [
+        "Pour être visibles en surface et signaler leur position aux bateaux."
+      ],
+      "theme": "Matériel",
+      "boite": 1
+    },
+    {
+      "id": 37,
+      "question": "Quels sont les risques d'utiliser un néoprène trop épais en eaux chaudes ?",
+      "reponse": [
+        "Surchauffe, déshydratation, et perte de mobilité."
+      ],
+      "theme": "Matériel",
+      "boite": 1
+    },
+    {
+      "id": 38,
+      "question": "Pourquoi faut-il rincer son matériel après une session en eau salée ?",
+      "reponse": [
+        "Pour éviter la corrosion et prolonger la durée de vie du matériel."
+      ],
+      "theme": "Matériel",
+      "boite": 1
+    },
+    {
+      "id": 39,
+      "question": "Quels sont les avantages d'un masque avec verres inclinés en apnée ?",
+      "reponse": [
+        "Meilleur champ de vision vers le bas, utile pour observer le fond ou le binôme."
+      ],
+      "theme": "Matériel",
+      "boite": 1
+    },
+    {
+      "id": 40,
+      "question": "Pourquoi les apnéistes utilisent-ils des ceintures de lestage avec système de largage rapide ?",
+      "reponse": [
+        "Pour pouvoir se délester rapidement en cas d'urgence (ex. : perte de conscience)."
+      ],
+      "theme": "Matériel",
+      "boite": 1
+    },
+
+    // --- Procédures d'urgence (20 questions) ---
+    {
+      "id": 41,
+      "question": "Que faire si ton binôme fait un BO en surface ?",
+      "reponse": [
+        "Le retourner sur le dos pour dégager les voies respiratoires",
+        "Lui tapoter le visage pour le stimuler",
+        "Appeler les secours si nécessaire",
+        "Rester avec lui jusqu'à ce qu'il reprenne conscience"
+      ],
+      "theme": "Procédures d'urgence",
+      "boite": 1
+    },
+    {
+      "id": 42,
+      "question": "Comment réagir en cas de perte de conscience en profondeur ?",
+      "reponse": [
+        "Remonter immédiatement le plongeur à la surface en le tenant par les aisselles",
+        "Le retourner sur le dos et dégager ses voies respiratoires",
+        "Commencer la RCP si nécessaire"
+      ],
+      "theme": "Procédures d'urgence",
+      "boite": 1
+    },
+    {
+      "id": 43,
+      "question": "Quelles sont les étapes pour sauver un apnéiste en détresse ?",
+      "reponse": [
+        "Remonter le plongeur à la surface",
+        "Dégager ses voies respiratoires",
+        "Vérifier sa respiration et son pouls",
+        "Commencer la RCP si nécessaire",
+        "Alerter les secours"
+      ],
+      "theme": "Procédures d'urgence",
+      "boite": 1
+    },
+    {
+      "id": 44,
+      "question": "Pourquoi faut-il toujours plonger avec un binôme en apnée ?",
+      "reponse": [
+        "Pour assurer une surveillance mutuelle et intervenir en cas de BO ou LMC."
+      ],
+      "theme": "Procédures d'urgence",
+      "boite": 1
+    },
+    {
+      "id": 45,
+      "question": "Comment signaler un problème en apnée (gestes, sons) ?",
+      "reponse": [
+        "Faire des signes avec les mains (ex. : tape sur la tête pour un BO)",
+        "Utiliser une bouée de signalisation",
+        "Frapper sur la bouteille ou le matériel pour attirer l'attention"
+      ],
+      "theme": "Procédures d'urgence",
+      "boite": 1
+    },
+    {
+      "id": 46,
+      "question": "Que faire si tu te sens mal pendant une apnée ?",
+      "reponse": [
+        "Arrêter immédiatement l'apnée et remonter à la surface",
+        "Signaler à ton binôme",
+        "Respirer profondément et calmement"
+      ],
+      "theme": "Procédures d'urgence",
+      "boite": 1
+    },
+    {
+      "id": 47,
+      "question": "Comment réagir si ton binôme a un LMC en profondeur ?",
+      "reponse": [
+        "Le stabiliser et l'aider à remonter lentement",
+        "Rester en contact visuel et physique",
+        "Être prêt à intervenir en cas de perte de conscience"
+      ],
+      "theme": "Procédures d'urgence",
+      "boite": 1
+    },
+    {
+      "id": 48,
+      "question": "Quels sont les numéros d'urgence à connaître en mer ?",
+      "reponse": [
+        "En Europe : 112 (numéro d'urgence universel)",
+        "En France : 196 (CROSS pour les secours en mer)"
+      ],
+      "theme": "Procédures d'urgence",
+      "boite": 1
+    },
+    {
+      "id": 49,
+      "question": "Pourquoi faut-il éviter de paniquer en cas de problème en apnée ?",
+      "reponse": [
+        "La panique augmente la consommation d'oxygène et le risque de BO."
+      ],
+      "theme": "Procédures d'urgence",
+      "boite": 1
+    },
+    {
+      "id": 50,
+      "question": "Comment aider un apnéiste qui a une crampe en profondeur ?",
+      "reponse": [
+        "L'aider à remonter lentement en le soutenant",
+        "Lui dire de respirer profondément une fois en surface",
+        "Éviter les mouvements brusques"
+      ],
+      "theme": "Procédures d'urgence",
+      "boite": 1
+    },
+    {
+      "id": 51,
+      "question": "Que faire si tu te perds en mer pendant une session d'apnée ?",
+      "reponse": [
+        "Rester calme et flotter à la surface",
+        "Utiliser une bouée de signalisation",
+        "Siffler ou crier pour attirer l'attention"
+      ],
+      "theme": "Procédures d'urgence",
+      "boite": 1
+    },
+    {
+      "id": 52,
+      "question": "Comment réagir si ton binôme ne remonte pas à la surface après une apnée ?",
+      "reponse": [
+        "Plonger pour le chercher et le remonter immédiatement",
+        "Alerter les secours si tu ne le trouves pas"
+      ],
+      "theme": "Procédures d'urgence",
+      "boite": 1
+    },
+    {
+      "id": 53,
+      "question": "Quels sont les signes d'un apnéiste en détresse ?",
+      "reponse": [
+        "Mouvements désordonnés",
+        "Absence de réaction aux stimuli",
+        "Perte de conscience"
+      ],
+      "theme": "Procédures d'urgence",
+      "boite": 1
+    },
+    {
+      "id": 54,
+      "question": "Pourquoi faut-il éviter de tenir un apnéiste en détresse par les bras ?",
+      "reponse": [
+        "Cela peut causer des blessures ou aggraver la situation. Il faut le soutenir par les aisselles ou la tête."
+      ],
+      "theme": "Procédures d'urgence",
+      "boite": 1
+    },
+    {
+      "id": 55,
+      "question": "Comment transporter un apnéiste inconscient hors de l'eau ?",
+      "reponse": [
+        "Le maintenir sur le dos avec la tête hors de l'eau",
+        "Le tirer par les aisselles ou utiliser une planche de sauvetage"
+      ],
+      "theme": "Procédures d'urgence",
+      "boite": 1
+    },
+    {
+      "id": 56,
+      "question": "Que faire si ton binôme a une hémorragie nasale après une apnée ?",
+      "reponse": [
+        "L'aider à se moucher doucement",
+        "Lui dire de pencher la tête en avant (pas en arrière)",
+        "Arrêter la session et consulter un médecin si le saignement persiste"
+      ],
+      "theme": "Procédures d'urgence",
+      "boite": 1
+    },
+    {
+      "id": 57,
+      "question": "Comment réagir si un apnéiste a une crise de panique en profondeur ?",
+      "reponse": [
+        "Le calmer en lui parlant et en le touchant",
+        "L'aider à remonter lentement",
+        "Lui rappeler de respirer profondément une fois en surface"
+      ],
+      "theme": "Procédures d'urgence",
+      "boite": 1
+    },
+    {
+      "id": 58,
+      "question": "Pourquoi faut-il éviter de faire des apnées en solo ?",
+      "reponse": [
+        "Il n'y a personne pour intervenir en cas de BO ou d'autre problème."
+      ],
+      "theme": "Procédures d'urgence",
+      "boite": 1
+    },
+    {
+      "id": 59,
+      "question": "Quels sont les gestes de premiers secours pour un apnéiste en BO ?",
+      "reponse": [
+        "Le retourner sur le dos",
+        "Dégager ses voies respiratoires",
+        "Vérifier sa respiration et son pouls",
+        "Commencer la RCP si nécessaire"
+      ],
+      "theme": "Procédures d'urgence",
+      "boite": 1
+    },
+    {
+      "id": 60,
+      "question": "Comment éviter les accidents en apnée ?",
+      "reponse": [
+        "Toujours plonger avec un binôme",
+        "Respecter ses limites",
+        "Utiliser un matériel adapté",
+        "Connaître les procédures d'urgence"
+      ],
+      "theme": "Procédures d'urgence",
+      "boite": 1
+    },
+
+    // --- Environnement et conditions (20 questions) ---
+    {
+      "id": 61,
+      "question": "Quels sont les dangers des courants en apnée ?",
+      "reponse": [
+        "Risque de dérive loin du point de plongée",
+        "Difficulté à remonter à la surface",
+        "Fatigue accrue"
+      ],
+      "theme": "Environnement",
+      "boite": 1
+    },
+    {
+      "id": 62,
+      "question": "Comment évaluer la visibilité avant une session d'apnée ?",
+      "reponse": [
+        "Plonger la tête sous l'eau pour vérifier la clarté",
+        "Observer la couleur de l'eau (eau trouble = mauvaise visibilité)"
+      ],
+      "theme": "Environnement",
+      "boite": 1
+    },
+    {
+      "id": 63,
+      "question": "Pourquoi éviter de plonger seul dans des zones inconnues ?",
+      "reponse": [
+        "Risque de se perdre, de rencontrer des courants imprévus ou des dangers (rochers, filets, etc.)"
+      ],
+      "theme": "Environnement",
+      "boite": 1
+    },
+    {
+      "id": 64,
+      "question": "Quels sont les risques liés à la température de l'eau en apnée ?",
+      "reponse": [
+        "Hypothermie (eau froide)",
+        "Déshydratation (eau chaude)",
+        "Crampes"
+      ],
+      "theme": "Environnement",
+      "boite": 1
+    },
+    {
+      "id": 65,
+      "question": "Comment adapter sa session en fonction de la météo ?",
+      "reponse": [
+        "Éviter de plonger par mauvais temps (vent, vagues)",
+        "Vérifier les prévisions météo avant de plonger"
+      ],
+      "theme": "Environnement",
+      "boite": 1
+    },
+    {
+      "id": 66,
+      "question": "Quels sont les dangers des vagues en apnée ?",
+      "reponse": [
+        "Risque de se faire frapper par une vague",
+        "Difficulté à remonter à la surface",
+        "Fatigue accrue"
+      ],
+      "theme": "Environnement",
+      "boite": 1
+    },
+    {
+      "id": 67,
+      "question": "Pourquoi faut-il éviter de plonger près des bateaux ?",
+      "reponse": [
+        "Risque de collision ou d'être aspiré par les hélices",
+        "Bruit et pollution"
+      ],
+      "theme": "Environnement",
+      "boite": 1
+    },
+    {
+      "id": 68,
+      "question": "Comment repérer les courants avant une session d'apnée ?",
+      "reponse": [
+        "Observer les vagues et leur direction",
+        "Jeter un objet flottant dans l'eau pour voir sa dérive",
+        "Demander aux locaux ou aux autres plongeurs"
+      ],
+      "theme": "Environnement",
+      "boite": 1
+    },
+    {
+      "id": 69,
+      "question": "Quels sont les risques de plonger dans des eaux polluées ?",
+      "reponse": [
+        "Irritation des yeux, de la peau ou des voies respiratoires",
+        "Risque d'infection"
+      ],
+      "theme": "Environnement",
+      "boite": 1
+    },
+    {
+      "id": 70,
+      "question": "Pourquoi faut-il éviter de plonger après une forte pluie ?",
+      "reponse": [
+        "L'eau peut être trouble et les courants plus forts",
+        "Risque de pollution accrue (ruissellement)"
+      ],
+      "theme": "Environnement",
+      "boite": 1
+    },
+    {
+      "id": 71,
+      "question": "Quels sont les dangers des méduses en apnée ?",
+      "reponse": [
+        "Risque de piqûres douloureuses ou allergiques",
+        "Certaines méduses peuvent être mortelles"
+      ],
+      "theme": "Environnement",
+      "boite": 1
+    },
+    {
+      "id": 72,
+      "question": "Comment éviter les rencontres dangereuses avec la faune marine ?",
+      "reponse": [
+        "Éviter de toucher ou de nourrir les animaux",
+        "Rester calme et ne pas faire de mouvements brusques",
+        "Connaître les espèces dangereuses de la zone"
+      ],
+      "theme": "Environnement",
+      "boite": 1
+    },
+    {
+      "id": 73,
+      "question": "Pourquoi faut-il éviter de plonger dans des zones de pêche ?",
+      "reponse": [
+        "Risque de se faire prendre dans un filet ou un hameçon",
+        "Présence de bateaux de pêche"
+      ],
+      "theme": "Environnement",
+      "boite": 1
+    },
+    {
+      "id": 74,
+      "question": "Quels sont les risques de plonger de nuit en apnée ?",
+      "reponse": [
+        "Visibilité réduite",
+        "Risque de se perdre ou de rencontrer des dangers non visibles",
+        "Difficulté à signaler sa position"
+      ],
+      "theme": "Environnement",
+      "boite": 1
+    },
+    {
+      "id": 75,
+      "question": "Comment adapter son lestage en fonction de l'eau salée ou douce ?",
+      "reponse": [
+        "En eau salée, on est plus flottant, donc il faut plus de lestage qu'en eau douce."
+      ],
+      "theme": "Environnement",
+      "boite": 1
+    },
+    {
+      "id": 76,
+      "question": "Quels sont les dangers des grottes ou des cavités en apnée ?",
+      "reponse": [
+        "Risque de se perdre ou de rester coincé",
+        "Difficulté à remonter à la surface",
+        "Manque de lumière"
+      ],
+      "theme": "Environnement",
+      "boite": 1
+    },
+    {
+      "id": 77,
+      "question": "Pourquoi faut-il éviter de plonger dans des zones à fort trafic maritime ?",
+      "reponse": [
+        "Risque de collision avec des bateaux",
+        "Pollution sonore et visuelle"
+      ],
+      "theme": "Environnement",
+      "boite": 1
+    },
+    {
+      "id": 78,
+      "question": "Comment évaluer la profondeur avant une plongée en apnée ?",
+      "reponse": [
+        "Utiliser un sondeur ou une carte bathymétrique",
+        "Demander aux locaux ou aux autres plongeurs",
+        "Faire un test de descente progressive"
+      ],
+      "theme": "Environnement",
+      "boite": 1
+    },
+    {
+      "id": 79,
+      "question": "Quels sont les risques de plonger dans des eaux très froides ?",
+      "reponse": [
+        "Hypothermie",
+        "Crampes",
+        "Perte de dextérité"
+      ],
+      "theme": "Environnement",
+      "boite": 1
+    },
+    {
+      "id": 80,
+      "question": "Pourquoi faut-il éviter de plonger dans des zones avec des algues denses ?",
+      "reponse": [
+        "Risque de s'emmêler dans les algues",
+        "Difficulté à voir et à se déplacer"
+      ],
+      "theme": "Environnement",
+      "boite": 1
+    },
+
+    // --- Techniques et bonnes pratiques (20 questions) ---
+    {
+      "id": 81,
+      "question": "Pourquoi faut-il toujours respirer avant et après l’apnée ?",
+      "reponse": [
+        "Pour oxygéner le sang avant l'apnée et éliminer le CO2 après."
+      ],
+      "theme": "Techniques",
+      "boite": 1
+    },
+    {
+      "id": 82,
+      "question": "Quelle est la règle des 1/3 en apnée et pourquoi est-elle importante ?",
+      "reponse": [
+        "Ne jamais utiliser plus d'1/3 de sa capacité pulmonaire pour une apnée, pour éviter l'hypoxie."
+      ],
+      "theme": "Techniques",
+      "boite": 1
+    },
+    {
+      "id": 83,
+      "question": "Comment bien compenser pour éviter les barotraumatismes ?",
+      "reponse": [
+        "Compenser tôt et souvent, dès les premiers mètres",
+        "Utiliser la manœuvre de Valsalva ou de Frenzel"
+      ],
+      "theme": "Techniques",
+      "boite": 1
+    },
+    {
+      "id": 84,
+      "question": "Pourquoi éviter de forcer sa respiration après une apnée ?",
+      "reponse": [
+        "Cela peut provoquer une hypoxie retardée et un BO en surface."
+      ],
+      "theme": "Techniques",
+      "boite": 1
+    },
+    {
+      "id": 85,
+      "question": "Quelles sont les limites personnelles à respecter en apnée ?",
+      "reponse": [
+        "Ne jamais dépasser sa profondeur maximale",
+        "Respecter son temps d'apnée maximal",
+        "Écouter son corps et ses sensations"
+      ],
+      "theme": "Techniques",
+      "boite": 1
+    },
+    {
+      "id": 86,
+      "question": "Pourquoi faut-il éviter de faire des apnées successives sans pause ?",
+      "reponse": [
+        "Cela peut entraîner une accumulation de CO2 et une hypoxie progressive."
+      ],
+      "theme": "Techniques",
+      "boite": 1
+    },
+    {
+      "id": 87,
+      "question": "Comment bien préparer une session d'apnée ?",
+      "reponse": [
+        "S'hydrater correctement",
+        "Manger léger et éviter l'alcool",
+        "Faire des étirements et des exercices de respiration"
+      ],
+      "theme": "Techniques",
+      "boite": 1
+    },
+    {
+      "id": 88,
+      "question": "Quels sont les bienfaits de la relaxation avant une apnée ?",
+      "reponse": [
+        "Réduit le stress et la consommation d'oxygène",
+        "Améliore la concentration"
+      ],
+      "theme": "Techniques",
+      "boite": 1
+    },
+    {
+      "id": 89,
+      "question": "Pourquoi faut-il éviter de plonger en apnée après un effort intense ?",
+      "reponse": [
+        "Le corps est déjà en dette d'oxygène, ce qui augmente le risque de BO."
+      ],
+      "theme": "Techniques",
+      "boite": 1
+    },
+    {
+      "id": 90,
+      "question": "Comment améliorer sa flottabilité en apnée ?",
+      "reponse": [
+        "Ajuster son lestage",
+        "Travailler sa technique de respiration",
+        "Utiliser une combinaison adaptée"
+      ],
+      "theme": "Techniques",
+      "boite": 1
+    },
+    {
+      "id": 91,
+      "question": "Quels sont les exercices pour améliorer sa capacité pulmonaire en apnée ?",
+      "reponse": [
+        "Exercices de respiration profonde (ex. : méthode Wim Hof)",
+        "Entraînement en apnée statique",
+        "Yoga ou méditation pour améliorer le contrôle respiratoire"
+      ],
+      "theme": "Techniques",
+      "boite": 1
+    },
+    {
+      "id": 92,
+      "question": "Pourquoi faut-il éviter de faire des apnées en position assise ?",
+      "reponse": [
+        "Risque de BO accru en raison d'une mauvaise circulation sanguine."
+      ],
+      "theme": "Techniques",
+      "boite": 1
+    },
+    {
+      "id": 93,
+      "question": "Comment bien gérer sa remontée en apnée ?",
+      "reponse": [
+        "Remonter lentement et en contrôlant sa respiration",
+        "Faire des pauses pour compenser si nécessaire",
+        "Signaler au binôme que tout va bien"
+      ],
+      "theme": "Techniques",
+      "boite": 1
+    },
+    {
+      "id": 94,
+      "question": "Quels sont les risques de faire des apnées en eau peu profonde ?",
+      "reponse": [
+        "Risque de collision avec le fond",
+        "Fausse sensation de sécurité (BO possible même à 2 mètres)"
+      ],
+      "theme": "Techniques",
+      "boite": 1
+    },
+    {
+      "id": 95,
+      "question": "Pourquoi faut-il éviter de faire des apnées avec un masque mal ajusté ?",
+      "reponse": [
+        "Risque d'inondation du masque et de panique",
+        "Difficulté à compenser"
+      ],
+      "theme": "Techniques",
+      "boite": 1
+    },
+    {
+      "id": 96,
+      "question": "Comment bien choisir sa profondeur maximale en apnée ?",
+      "reponse": [
+        "Commencer progressivement et augmenter la profondeur avec l'expérience",
+        "Toujours plonger avec un binôme",
+        "Respecter ses limites physiques"
+      ],
+      "theme": "Techniques",
+      "boite": 1
+    },
+    {
+      "id": 97,
+      "question": "Quels sont les bienfaits de l'apnée sur la santé ?",
+      "reponse": [
+        "Améliore la capacité pulmonaire",
+        "Réduit le stress",
+        "Renforce le système cardiovasculaire"
+      ],
+      "theme": "Techniques",
+      "boite": 1
+    },
+    {
+      "id": 98,
+      "question": "Pourquoi faut-il éviter de faire des apnées en compétition sans entraînement ?",
+      "reponse": [
+        "Risque accru de BO ou de LMC en raison de la pression et du stress."
+      ],
+      "theme": "Techniques",
+      "boite": 1
+    },
+    {
+      "id": 99,
+      "question": "Comment bien respirer entre deux apnées ?",
+      "reponse": [
+        "Respirer profondément et lentement pour éliminer le CO2",
+        "Éviter l'hyperventilation"
+      ],
+      "theme": "Techniques",
+      "boite": 1
+    },
+    {
+      "id": 100,
+      "question": "Quels sont les signes qu'il faut arrêter une session d'apnée ?",
+      "reponse": [
+        "Fatigue extrême",
+        "Vertiges ou nausées",
+        "Difficulté à compenser",
+        "Sensation de malaise"
+      ],
+      "theme": "Techniques",
+      "boite": 1
+    }
+  ]
+}
