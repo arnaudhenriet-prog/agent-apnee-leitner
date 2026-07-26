@@ -4,15 +4,43 @@ import random
 from datetime import datetime
 
 # --- Configuration de la page ---
-st.set_page_config(page_title="Agent Apnée Leitner", page_icon="🌊", layout="centered")
+st.set_page_config(
+    page_title="Agent Apnée Leitner",
+    page_icon="🌊",
+    layout="centered"
+)
 
 # --- Style CSS pour le thème mer/zen ---
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
-    .stApp { background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 100%); font-family: 'Roboto', sans-serif; }
-    .main-header { text-align: center; color: #004D40; margin-bottom: 10px; font-size: 2.5em; font-weight: 700; }
-    .sub-header { text-align: center; color: #0277BD; margin-bottom: 30px; font-size: 1.2em; font-weight: 300; }
+
+    /* Fond et police */
+    .stApp {
+        background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 100%);
+        font-family: 'Roboto', sans-serif;
+        color: #01579B;
+    }
+
+    /* En-tête */
+    .main-header {
+        text-align: center;
+        color: #004D40;
+        margin-bottom: 10px;
+        font-size: 2.5em;
+        font-weight: 700;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .sub-header {
+        text-align: center;
+        color: #0277BD;
+        margin-bottom: 30px;
+        font-size: 1.2em;
+        font-weight: 300;
+    }
+
+    /* Score */
     .score-box {
         background: rgba(255, 255, 255, 0.85);
         border-radius: 15px;
@@ -24,6 +52,8 @@ st.markdown("""
         color: #004D40;
         border-left: 5px solid #2196F3;
     }
+
+    /* Questions */
     .question-box {
         background: rgba(255, 255, 255, 0.9);
         border-radius: 15px;
@@ -32,7 +62,16 @@ st.markdown("""
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         border-left: 5px solid #00ACC1;
     }
-    .stRadio > div { background: rgba(245, 245, 245, 0.7); padding: 12px; border-radius: 10px; margin: 8px 0; }
+
+    /* Radio buttons */
+    .stRadio > div {
+        background: rgba(245, 245, 245, 0.7);
+        padding: 12px;
+        border-radius: 10px;
+        margin: 8px 0;
+    }
+
+    /* Boutons */
     .stButton > button {
         background: linear-gradient(to right, #0288D1, #01579B);
         color: white;
@@ -45,7 +84,13 @@ st.markdown("""
         box-shadow: 0 4px 6px rgba(0,0,0,0.2);
         transition: all 0.3s;
     }
-    .stButton > button:hover { transform: scale(1.05); box-shadow: 0 6px 10px rgba(0,0,0,0.3); }
+
+    .stButton > button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 10px rgba(0,0,0,0.3);
+    }
+
+    /* Feedback */
     .feedback {
         background: rgba(255, 255, 255, 0.8);
         padding: 15px;
@@ -54,8 +99,12 @@ st.markdown("""
         border-left: 4px solid #FF9800;
         font-size: 1.1em;
     }
+
     .success { color: #00695C; font-weight: bold; }
     .error { color: #D32F2F; font-weight: bold; }
+
+    /* Désactiver le rerun automatique des radio buttons */
+    .stRadio { pointer-events: auto !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -72,26 +121,26 @@ FAUSSES_REPONSES = {
         "Cela n'arrive qu'en apnée statique."
     ],
     "Matériel": [
-        "Pour éviter les buées sur le masque.",
-        "Pour améliorer la vision périphérique.",
-        "Pour réduire la résistance à l'avancement.",
+        "Pour éviter les buées sur le masque en eau froide.",
+        "Pour permettre une meilleure vision périphérique.",
+        "Pour réduire la résistance à l'avancement dans l'eau.",
         "Pour faciliter l'égalité des oreilles."
     ],
     "Procédures d'urgence": [
-        "Lui faire boire de l'eau salée.",
-        "Le placer en position assise.",
-        "Lui donner de l'oxygène pur.",
+        "Lui faire boire de l'eau salée pour le réveiller.",
+        "Le placer en position assise pour faciliter la respiration.",
+        "Lui donner une bouffée d'oxygène pur si disponible.",
         "Attendre 5 minutes avant d'intervenir."
     ],
     "Environnement": [
-        "Les courants aident à la flottabilité.",
-        "Les courants sont sans danger pour les expérimentés.",
+        "Les courants aident à maintenir une flottabilité stable.",
+        "Les courants sont sans danger pour les plongeurs expérimentés.",
         "Les courants n'affectent pas la consommation d'oxygène.",
         "Les courants sont toujours prévisibles."
     ],
     "Techniques": [
-        "Respirer profondément avant l'apnée.",
-        "Technique réservée aux confirmés.",
+        "Respirer profondément avant l'apnée pour saturer les poumons.",
+        "Technique réservée aux apnéistes confirmés.",
         "Réduit la pression dans les sinus.",
         "Méthode pour éviter les crampes."
     ]
@@ -108,7 +157,6 @@ def questions_a_reviser(questions, progres, date_aujourdhui):
         q_id = str(question["id"])
         boite = progres["questions"].get(q_id, {}).get("boite", 1)
         derniere_revision = progres["questions"].get(q_id, {}).get("derniere_revision")
-
         if derniere_revision is None:
             a_reviser.append(question)
         else:
@@ -121,8 +169,6 @@ def generer_choix(question, questions):
     bonne_reponse = question["reponse"][0]
     theme = question["theme"]
     fausses_reponses = []
-
-    # Prendre 2 réponses d'autres questions du même thème
     autres_questions = [q for q in questions if str(q["id"]) != str(question["id"]) and q["theme"] == theme]
     if len(autres_questions) >= 2:
         for _ in range(2):
@@ -130,21 +176,13 @@ def generer_choix(question, questions):
             fausses_reponses.append(q["reponse"][0])
             autres_questions.remove(q)
     else:
-        # Sinon, utiliser des fausses réponses prédéfinies
         fausses_reponses = random.sample(FAUSSES_REPONSES.get(theme, ["Option 1", "Option 2"]), 2)
-
     choix = [bonne_reponse] + fausses_reponses
     random.shuffle(choix)
     return choix, bonne_reponse
 
 # --- Application principale ---
 def main():
-    st.markdown('<div class="main-header">🌊 Agent IA - Sécurité en Apnée</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-header">Réviser avec la méthode de Leitner</div>', unsafe_allow_html=True)
-
-    questions = charger_questions()
-    date_aujourdhui = datetime.now()
-
     # Initialisation de la session
     if "progres" not in st.session_state:
         st.session_state.progres = {"derniere_revision": None, "questions": {}}
@@ -156,8 +194,12 @@ def main():
         st.session_state.index_question = 0
     if "feedback" not in st.session_state:
         st.session_state.feedback = ""
-    if "valider_clique" not in st.session_state:
-        st.session_state.valider_clique = False
+    if "submitted" not in st.session_state:
+        st.session_state.submitted = False
+
+    # En-tête
+    st.markdown('<div class="main-header">🌊 Agent IA - Sécurité en Apnée</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-header">Réviser avec la méthode de Leitner</div>', unsafe_allow_html=True)
 
     # Affichage du score
     st.markdown(f"""
@@ -167,8 +209,10 @@ def main():
     </div>
     """, unsafe_allow_html=True)
 
-    # Sélection des questions à réviser
+    questions = charger_questions()
+    date_aujourdhui = datetime.now()
     a_reviser = questions_a_reviser(questions, st.session_state.progres, date_aujourdhui)
+
     if not a_reviser:
         st.success("Aucune question à réviser aujourd'hui ! 🎉")
         st.markdown(f"""
@@ -194,59 +238,57 @@ def main():
         </div>
         """, unsafe_allow_html=True)
 
-        # Sélection de la réponse (SANS validation automatique)
-        reponse_selectionnee = st.radio(
-            "Sélectionne ta réponse:",
-            choix,
-            key=f"qcm_{question['id']}_{st.session_state.index_question}",
-            label_visibility="collapsed"
-        )
+        # Utilisation d'un formulaire pour éviter le rerun automatique
+        with st.form(key=f"form_{question['id']}_{st.session_state.index_question}"):
+            reponse_selectionnee = st.radio(
+                "Sélectionne ta réponse:",
+                choix,
+                key=f"qcm_{question['id']}",
+                label_visibility="collapsed"
+            )
 
-        # Boutons
-        col1, col2 = st.columns([1, 1])
-        with col1:
-            if st.button("✅ Valider", key=f"valider_{question['id']}"):
-                st.session_state.valider_clique = True
-                if reponse_selectionnee == bonne_reponse:
-                    st.session_state.reussites += 1
-                    st.session_state.feedback = "✅ **Bonne réponse !**"
-                    # Mise à jour de la boîte de Leitner
-                    q_id = str(question["id"])
-                    if q_id not in st.session_state.progres["questions"]:
-                        st.session_state.progres["questions"][q_id] = {"boite": 1, "derniere_revision": None}
-                    st.session_state.progres["questions"][q_id]["boite"] = min(
-                        st.session_state.progres["questions"][q_id]["boite"] + 1, 5
-                    )
-                    st.session_state.progres["questions"][q_id]["derniere_revision"] = date_aujourdhui.strftime("%Y-%m-%d")
-                else:
-                    st.session_state.erreurs += 1
-                    st.session_state.feedback = f"❌ **Mauvaise réponse !**<br>La bonne réponse était: **{bonne_reponse}**"
-                    # Mise à jour de la boîte de Leitner
-                    q_id = str(question["id"])
-                    if q_id not in st.session_state.progres["questions"]:
-                        st.session_state.progres["questions"][q_id] = {"boite": 1, "derniere_revision": None}
-                    st.session_state.progres["questions"][q_id]["boite"] = max(
-                        st.session_state.progres["questions"][q_id]["boite"] - 1, 1
-                    )
-                    st.session_state.progres["questions"][q_id]["derniere_revision"] = date_aujourdhui.strftime("%Y-%m-%d")
+            col1, col2 = st.columns([1, 1])
+            with col1:
+                submitted = st.form_submit_button("✅ Valider")
+            with col2:
+                if st.button("⏭️ Passer"):
+                    st.session_state.index_question += 1
+                    st.rerun()
 
-                st.session_state.index_question += 1
-                st.rerun()
+        # Traitement après soumission du formulaire
+        if submitted:
+            if reponse_selectionnee == bonne_reponse:
+                st.session_state.reussites += 1
+                st.session_state.feedback = "✅ **Bonne réponse !**"
+                # Mise à jour de la boîte de Leitner
+                q_id = str(question["id"])
+                if q_id not in st.session_state.progres["questions"]:
+                    st.session_state.progres["questions"][q_id] = {"boite": 1, "derniere_revision": None}
+                st.session_state.progres["questions"][q_id]["boite"] = min(
+                    st.session_state.progres["questions"][q_id]["boite"] + 1, 5
+                )
+                st.session_state.progres["questions"][q_id]["derniere_revision"] = date_aujourdhui.strftime("%Y-%m-%d")
+            else:
+                st.session_state.erreurs += 1
+                st.session_state.feedback = f"❌ **Mauvaise réponse !**<br>La bonne réponse était: **{bonne_reponse}**"
+                # Mise à jour de la boîte de Leitner
+                q_id = str(question["id"])
+                if q_id not in st.session_state.progres["questions"]:
+                    st.session_state.progres["questions"][q_id] = {"boite": 1, "derniere_revision": None}
+                st.session_state.progres["questions"][q_id]["boite"] = max(
+                    st.session_state.progres["questions"][q_id]["boite"] - 1, 1
+                )
+                st.session_state.progres["questions"][q_id]["derniere_revision"] = date_aujourdhui.strftime("%Y-%m-%d")
 
-        with col2:
-            if st.button("⏭️ Passer", key=f"passer_{question['id']}"):
-                st.session_state.index_question += 1
-                st.rerun()
-
-        # Affichage du feedback UNIQUEMENT après validation
-        if st.session_state.valider_clique:
+            # Affichage du feedback
             st.markdown(f"""
             <div class="feedback">
                 {st.session_state.feedback}
             </div>
             """, unsafe_allow_html=True)
-            st.session_state.valider_clique = False
-            st.session_state.feedback = ""
+
+            st.session_state.index_question += 1
+            st.rerun()
 
     else:
         st.success("🎉 Tu as terminé toutes les questions pour aujourd'hui !")
