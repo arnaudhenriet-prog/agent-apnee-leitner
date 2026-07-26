@@ -3,8 +3,12 @@ import json
 import random
 from datetime import datetime
 
-# --- Configuration ---
-st.set_page_config(page_title="Agent Apnée Leitner", page_icon="🌊", layout="centered")
+# --- Configuration de la page ---
+st.set_page_config(
+    page_title="Agent Apnée Leitner",
+    page_icon="🌊",
+    layout="centered"
+)
 
 # --- Style CSS pour le thème mer/zen ---
 st.markdown("""
@@ -123,30 +127,45 @@ FAUSSES_REPONSES = {
 
 # --- Fonctions ---
 def charger_questions():
+    """Charge les questions depuis le fichier JSON."""
     with open(NOM_FICHIER_QUESTIONS, "r", encoding="utf-8") as f:
         return json.load(f)["questions"]
 
-def questions_a_reviser(questions, progres):
+def initialiser_boites(questions):
+    """Initialise les boîtes de Leitner pour toutes les questions."""
+    boites = {}
+    for question in questions:
+        q_id = str(question["id"])
+        boites[q_id] = {
+            "boite": question.get("boite", 1),  # Boîte par défaut = 1
+            "derniere_revision": None
+        }
+    return boites
+
+def questions_a_reviser(questions, boites):
+    """Sélectionne les questions à réviser aujourd'hui selon la méthode de Leitner."""
     a_reviser = []
     date_aujourdhui = datetime.now()
     for question in questions:
         q_id = str(question["id"])
-        if q_id not in progres["questions"]:
-            progres["questions"][q_id] = {"boite": 1, "derniere_revision": None}
-        boite = progres["questions"][q_id]["boite"]
-        derniere_revision = progres["questions"][q_id]["derniere_revision"]
-        if derniere_revision is None:
+        boite = boites[q_id]["boite"]
+        derniere_revision = boites[q_id]["derniere_revision"]
+
+        # Si jamais révisée ou intervalle écoulé, ajouter à la liste
+        if derniere_revision is None or (
+            (date_aujourdhui - datetime.strptime(derniere_revision, "%Y-%m-%d")).days
+            >= INTERVALLES_BOITES[boite]
+        ):
             a_reviser.append(question)
-        else:
-            jours_ecoules = (date_aujourdhui - datetime.strptime(derniere_revision, "%Y-%m-%d")).days
-            if jours_ecoules >= INTERVALLES_BOITES[boite]:
-                a_reviser.append(question)
     return a_reviser
 
 def generer_choix(question, questions):
+    """Génère les choix pour un QCM (1 bonne réponse + 2 fausses)."""
     bonne_reponse = question["reponse"][0]
     theme = question["theme"]
     fausses_reponses = []
+
+    # Prendre 2 fausses réponses du même thème si possible
     autres_questions = [q for q in questions if str(q["id"]) != str(question["id"]) and q["theme"] == theme]
     if len(autres_questions) >= 2:
         for _ in range(2):
@@ -154,76 +173,95 @@ def generer_choix(question, questions):
             fausses_reponses.append(q["reponse"][0])
             autres_questions.remove(q)
     else:
+        # Sinon, utiliser des fausses réponses prédéfinies
         fausses_reponses = random.sample(FAUSSES_REPONSES.get(theme, ["Option 1", "Option 2"]), 2)
+
     choix = [bonne_reponse] + fausses_reponses
     random.shuffle(choix)
     return choix, bonne_reponse
 
 # --- Application principale ---
 def main():
-    # Initialisation de la session
-    if "progres" not in st.session_state:
-        st.session_state.progres = {
-            "derniere_revision": None,
-            "questions": {},
-            "reussites": 0,
-            "erreurs": 0
-        }
+    # --- Initialisation de la session ---
+    # Scores (temporaires, réinitialisés à chaque session)
+    if "scores" not in st.session_state:
+        st.session_state.scores = {"reussites": 0, "erreurs": 0}
+
+    # Boîtes de Leitner (persistantes pendant la session)
+    if "boites" not in st.session_state:
+        questions = charger_questions()
+        st.session_state.boites = initialiser_boites(questions)
+
+    # Autres variables de session
     if "index_question" not in st.session_state:
         st.session_state.index_question = 0
+    if "feedback_message" not in st.session_state:
+        st.session_state.feedback_message = ""
 
-    # En-tête
+    # --- En-tête ---
     st.markdown('<div class="main-header">🌊 Agent IA - Sécurité en Apnée</div>', unsafe_allow_html=True)
     st.markdown('<div class="sub-header">Réviser avec la méthode de Leitner</div>', unsafe_allow_html=True)
 
-    # Affichage du score
+    # --- Affichage du score (toujours à jour) ---
     st.markdown(f"""
     <div class="score-box">
-        📊 Score: <span class="success">{st.session_state.progres["reussites"]} ✅</span> |
-        <span class="error">{st.session_state.progres["erreurs"]} ❌</span>
+        📊 Score: <span class="success">{st.session_state.scores["reussites"]} ✅</span> |
+        <span class="error">{st.session_state.scores["erreurs"]} ❌</span>
     </div>
     """, unsafe_allow_html=True)
 
+    # --- Affichage du feedback (si présent) ---
+    if st.session_state.feedback_message:
+        st.markdown(f"""
+        <div class="feedback">
+            {st.session_state.feedback_message}
+        </div>
+        """, unsafe_allow_html=True)
+        st.session_state.feedback_message = ""  # Réinitialiser après affichage
+
+    # --- Chargement des questions ---
     questions = charger_questions()
-    a_reviser = questions_a_reviser(questions, st.session_state.progres)
+    a_reviser = questions_a_reviser(questions, st.session_state.boites)
 
     if not a_reviser:
         st.success("Aucune question à réviser aujourd'hui ! 🎉")
         st.markdown(f"""
         <div class="score-box">
-            📊 Score final: <span class="success">{st.session_state.progres["reussites"]} ✅</span> |
-            <span class="error">{st.session_state.progres["erreurs"]} ❌</span>
+            📊 Score final: <span class="success">{st.session_state.scores["reussites"]} ✅</span> |
+            <span class="error">{st.session_state.scores["erreurs"]} ❌</span>
         </div>
         """, unsafe_allow_html=True)
         st.stop()
 
-    # Mélanger les questions
+    # --- Mélanger les questions à réviser ---
     random.shuffle(a_reviser)
     st.info(f"🔹 Tu as **{len(a_reviser)}** questions à réviser aujourd'hui.")
 
-    # Afficher la question actuelle
+    # --- Afficher la question actuelle ---
     if st.session_state.index_question < len(a_reviser):
         question = a_reviser[st.session_state.index_question]
         choix, bonne_reponse = generer_choix(question, questions)
         q_id = str(question["id"])
 
-        # Affichage de la question
-        boite_actuelle = st.session_state.progres["questions"][q_id]["boite"]
+        # Affichage de la question et de sa boîte
+        boite_actuelle = st.session_state.boites[q_id]["boite"]
         st.markdown(f"""
         <div class="question-box">
             <h3>🏝️ Thème: {question['theme']}</h3>
             <p><strong>Question:</strong> {question['question']}</p>
-            <p class="box-info">Boîte: {boite_actuelle} |
-            Prochaine révision dans {INTERVALLES_BOITES[boite_actuelle]} jours</p>
+            <p class="box-info">
+                Boîte: {boite_actuelle} |
+                Prochaine révision dans {INTERVALLES_BOITES[boite_actuelle]} jours
+            </p>
         </div>
         """, unsafe_allow_html=True)
 
-        # Utilisation d'un formulaire pour éviter le rerun automatique
-        with st.form(key=f"form_{question['id']}_{st.session_state.index_question}"):
+        # --- Formulaire pour la réponse (évite le rerun automatique) ---
+        with st.form(key=f"form_{q_id}_{st.session_state.index_question}"):
             reponse_selectionnee = st.radio(
                 "Sélectionne ta réponse:",
                 choix,
-                key=f"qcm_{question['id']}",
+                key=f"qcm_{q_id}",
                 label_visibility="collapsed"
             )
 
@@ -234,26 +272,31 @@ def main():
                 passer = st.form_submit_button("⏭️ Passer")
 
             if submitted:
+                # Mise à jour des scores
                 if reponse_selectionnee == bonne_reponse:
-                    st.session_state.progres["reussites"] += 1
-                    st.success("✅ **Bonne réponse !**")
+                    st.session_state.scores["reussites"] += 1
+                    st.session_state.feedback_message = "✅ **Bonne réponse !**"
                     # Monte d'une boîte (max 5)
-                    st.session_state.progres["questions"][q_id]["boite"] = min(
-                        st.session_state.progres["questions"][q_id]["boite"] + 1, 5
+                    st.session_state.boites[q_id]["boite"] = min(
+                        st.session_state.boites[q_id]["boite"] + 1, 5
                     )
                 else:
-                    st.session_state.progres["erreurs"] += 1
-                    st.error("❌ **Mauvaise réponse !**")
-                    st.write(f"**La bonne réponse était :** **{bonne_reponse}**")
+                    st.session_state.scores["erreurs"] += 1
+                    st.session_state.feedback_message = (
+                        f"❌ **Mauvaise réponse !**<br>"
+                        f"La bonne réponse était: **{bonne_reponse}**"
+                    )
                     # Descend d'une boîte (min 1)
-                    st.session_state.progres["questions"][q_id]["boite"] = max(
-                        st.session_state.progres["questions"][q_id]["boite"] - 1, 1
+                    st.session_state.boites[q_id]["boite"] = max(
+                        st.session_state.boites[q_id]["boite"] - 1, 1
                     )
 
                 # Mise à jour de la date de révision
-                st.session_state.progres["questions"][q_id]["derniere_revision"] = datetime.now().strftime("%Y-%m-%d")
+                st.session_state.boites[q_id]["derniere_revision"] = datetime.now().strftime("%Y-%m-%d")
+
+                # Passer à la question suivante
                 st.session_state.index_question += 1
-                st.rerun()
+                st.rerun()  # Le feedback est déjà stocké dans st.session_state
 
             elif passer:
                 st.session_state.index_question += 1
