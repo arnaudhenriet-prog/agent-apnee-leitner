@@ -2,6 +2,7 @@ import streamlit as st
 import json
 import random
 from datetime import datetime
+import os
 
 # --- Configuration de la page ---
 st.set_page_config(
@@ -84,6 +85,7 @@ st.markdown("""
 
 # --- Constantes ---
 NOM_FICHIER_QUESTIONS = "questions.json"
+NOM_FICHIER_PROGRES = "progres.json"
 INTERVALLES_BOITES = {1: 1, 2: 2, 3: 4, 4: 8, 5: 16}
 
 # --- Fausses réponses plausibles ---
@@ -125,6 +127,16 @@ def charger_questions():
     with open(NOM_FICHIER_QUESTIONS, "r", encoding="utf-8") as f:
         return json.load(f)["questions"]
 
+def charger_progres():
+    if os.path.exists(NOM_FICHIER_PROGRES):
+        with open(NOM_FICHIER_PROGRES, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {"derniere_revision": None, "questions": {}, "reussites": 0, "erreurs": 0}
+
+def sauvegarder_progres(progres):
+    with open(NOM_FICHIER_PROGRES, "w", encoding="utf-8") as f:
+        json.dump(progres, f, indent=4, ensure_ascii=False)
+
 def questions_a_reviser(questions, progres):
     a_reviser = []
     date_aujourdhui = datetime.now()
@@ -158,15 +170,9 @@ def generer_choix(question, questions):
 
 # --- Application principale ---
 def main():
-    # Initialisation de la session
-    if "progres" not in st.session_state:
-        st.session_state.progres = {"derniere_revision": None, "questions": {}}
-    if "reussites" not in st.session_state:
-        st.session_state.reussites = 0
-    if "erreurs" not in st.session_state:
-        st.session_state.erreurs = 0
-    if "index_question" not in st.session_state:
-        st.session_state.index_question = 0
+    # Charger les données
+    questions = charger_questions()
+    progres = charger_progres()
 
     # En-tête
     st.markdown('<div class="main-header">🌊 Agent IA - Sécurité en Apnée</div>', unsafe_allow_html=True)
@@ -175,20 +181,19 @@ def main():
     # Affichage du score
     st.markdown(f"""
     <div class="score-box">
-        📊 Score: <span class="success">{st.session_state.reussites} ✅</span> |
-        <span class="error">{st.session_state.erreurs} ❌</span>
+        📊 Score: <span class="success">{progres.get("reussites", 0)} ✅</span> |
+        <span class="error">{progres.get("erreurs", 0)} ❌</span>
     </div>
     """, unsafe_allow_html=True)
 
-    questions = charger_questions()
-    a_reviser = questions_a_reviser(questions, st.session_state.progres)
+    a_reviser = questions_a_reviser(questions, progres)
 
     if not a_reviser:
         st.success("Aucune question à réviser aujourd'hui ! 🎉")
         st.markdown(f"""
         <div class="score-box">
-            📊 Score final: <span class="success">{st.session_state.reussites} ✅</span> |
-            <span class="error">{st.session_state.erreurs} ❌</span>
+            📊 Score final: <span class="success">{progres.get("reussites", 0)} ✅</span> |
+            <span class="error">{progres.get("erreurs", 0)} ❌</span>
         </div>
         """, unsafe_allow_html=True)
         return
@@ -196,6 +201,10 @@ def main():
     # Mélanger les questions
     random.shuffle(a_reviser)
     st.info(f"🔹 Tu as **{len(a_reviser)}** questions à réviser aujourd'hui.")
+
+    # Initialiser l'index de question si non présent
+    if "index_question" not in st.session_state:
+        st.session_state.index_question = 0
 
     # Afficher la question actuelle
     if st.session_state.index_question < len(a_reviser):
@@ -227,30 +236,27 @@ def main():
 
         # Traitement après soumission du formulaire
         if submitted:
+            q_id = str(question["id"])
+            if q_id not in progres["questions"]:
+                progres["questions"][q_id] = {"boite": 1, "derniere_revision": None}
+
             if reponse_selectionnee == bonne_reponse:
-                st.session_state.reussites += 1
+                progres["reussites"] = progres.get("reussites", 0) + 1
                 st.success("✅ **Bonne réponse !**")
+                progres["questions"][q_id]["boite"] = min(
+                    progres["questions"][q_id]["boite"] + 1, 5
+                )
             else:
-                st.session_state.erreurs += 1
+                progres["erreurs"] = progres.get("erreurs", 0) + 1
                 st.error("❌ **Mauvaise réponse !**")
                 st.markdown(f"**La bonne réponse était :** **{bonne_reponse}**")
-
-            # Mise à jour de la boîte de Leitner
-            q_id = str(question["id"])
-            if q_id not in st.session_state.progres["questions"]:
-                st.session_state.progres["questions"][q_id] = {"boite": 1, "derniere_revision": None}
-
-            if reponse_selectionnee == bonne_reponse:
-                st.session_state.progres["questions"][q_id]["boite"] = min(
-                    st.session_state.progres["questions"][q_id]["boite"] + 1, 5
+                progres["questions"][q_id]["boite"] = max(
+                    progres["questions"][q_id]["boite"] - 1, 1
                 )
-            else:
-                st.session_state.progres["questions"][q_id]["boite"] = max(
-                    st.session_state.progres["questions"][q_id]["boite"] - 1, 1
-                )
-            st.session_state.progres["questions"][q_id]["derniere_revision"] = datetime.now().strftime("%Y-%m-%d")
 
-            # Passer à la question suivante
+            progres["questions"][q_id]["derniere_revision"] = datetime.now().strftime("%Y-%m-%d")
+            sauvegarder_progres(progres)
+
             st.session_state.index_question += 1
             st.rerun()
 
@@ -262,8 +268,8 @@ def main():
         st.success("🎉 Tu as terminé toutes les questions pour aujourd'hui !")
         st.markdown(f"""
         <div class="score-box">
-            📊 Score final: <span class="success">{st.session_state.reussites} ✅</span> |
-            <span class="error">{st.session_state.erreurs} ❌</span>
+            📊 Score final: <span class="success">{progres.get("reussites", 0)} ✅</span> |
+            <span class="error">{progres.get("erreurs", 0)} ❌</span>
         </div>
         """, unsafe_allow_html=True)
 
