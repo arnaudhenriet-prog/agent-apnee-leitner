@@ -368,7 +368,6 @@
       "boite": 1
     },
 
-    // --- Procédures d'urgence (20 questions) ---
     {
       "id": 41,
       "question": "Que faire si ton binôme fait un BO en surface ?",
