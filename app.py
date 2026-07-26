@@ -163,8 +163,6 @@ def main():
         st.session_state.progres = {"derniere_revision": None, "questions": {}, "reussites": 0, "erreurs": 0}
     if "index_question" not in st.session_state:
         st.session_state.index_question = 0
-    if "feedback" not in st.session_state:
-        st.session_state.feedback = ""
 
     # En-tête
     st.markdown('<div class="main-header">🌊 Agent IA - Sécurité en Apnée</div>', unsafe_allow_html=True)
@@ -196,65 +194,59 @@ def main():
     st.info(f"🔹 Tu as **{len(a_reviser)}** questions à réviser aujourd'hui.")
 
     # Afficher la question actuelle
-    question = a_reviser[st.session_state.index_question]
-    choix, bonne_reponse = generer_choix(question, questions)
+    if st.session_state.index_question < len(a_reviser):
+        question = a_reviser[st.session_state.index_question]
+        choix, bonne_reponse = generer_choix(question, questions)
 
-    # Affichage de la question
-    st.markdown(f"""
-    <div class="question-box">
-        <h3>🏝️ Thème: {question['theme']} (Boîte {question['boite']})</h3>
-        <p><strong>Question:</strong> {question['question']}</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # Affichage du feedback si présent
-    if st.session_state.feedback:
+        # Affichage de la question
         st.markdown(f"""
-        <div class="feedback">
-            {st.session_state.feedback}
+        <div class="question-box">
+            <h3>🏝️ Thème: {question['theme']} (Boîte {question['boite']})</h3>
+            <p><strong>Question:</strong> {question['question']}</p>
         </div>
         """, unsafe_allow_html=True)
 
-    # Utilisation d'un formulaire pour éviter le rerun automatique
-    with st.form(key=f"form_{question['id']}_{st.session_state.index_question}"):
-        reponse_selectionnee = st.radio(
-            "Sélectionne ta réponse:",
-            choix,
-            key=f"qcm_{question['id']}",
-            label_visibility="collapsed"
-        )
+        # Utilisation d'un formulaire pour éviter le rerun automatique
+        with st.form(key=f"form_{question['id']}_{st.session_state.index_question}"):
+            reponse_selectionnee = st.radio(
+                "Sélectionne ta réponse:",
+                choix,
+                key=f"qcm_{question['id']}",
+                label_visibility="collapsed"
+            )
 
-        col1, col2 = st.columns([1, 1])
-        with col1:
-            submitted = st.form_submit_button("✅ Valider")
-        with col2:
-            passer = st.form_submit_button("⏭️ Passer")
+            col1, col2 = st.columns([1, 1])
+            with col1:
+                submitted = st.form_submit_button("✅ Valider")
+            with col2:
+                passer = st.form_submit_button("⏭️ Passer")
 
-        if submitted:
-            q_id = str(question["id"])
-            if q_id not in st.session_state.progres["questions"]:
-                st.session_state.progres["questions"][q_id] = {"boite": 1, "derniere_revision": None}
+            if submitted:
+                q_id = str(question["id"])
+                if q_id not in st.session_state.progres["questions"]:
+                    st.session_state.progres["questions"][q_id] = {"boite": 1, "derniere_revision": None}
 
-            if reponse_selectionnee == bonne_reponse:
-                st.session_state.progres["reussites"] += 1
-                st.session_state.feedback = "✅ **Bonne réponse !**"
-                st.session_state.progres["questions"][q_id]["boite"] = min(
-                    st.session_state.progres["questions"][q_id]["boite"] + 1, 5
-                )
-            else:
-                st.session_state.progres["erreurs"] += 1
-                st.session_state.feedback = f"❌ **Mauvaise réponse !**<br>La bonne réponse était: **{bonne_reponse}**"
-                st.session_state.progres["questions"][q_id]["boite"] = max(
-                    st.session_state.progres["questions"][q_id]["boite"] - 1, 1
-                )
+                if reponse_selectionnee == bonne_reponse:
+                    st.session_state.progres["reussites"] += 1
+                    st.success("✅ **Bonne réponse !**")
+                    st.session_state.progres["questions"][q_id]["boite"] = min(
+                        st.session_state.progres["questions"][q_id]["boite"] + 1, 5
+                    )
+                else:
+                    st.session_state.progres["erreurs"] += 1
+                    st.error("❌ **Mauvaise réponse !**")
+                    st.write(f"**La bonne réponse était :** **{bonne_reponse}**")
+                    st.session_state.progres["questions"][q_id]["boite"] = max(
+                        st.session_state.progres["questions"][q_id]["boite"] - 1, 1
+                    )
 
-            st.session_state.progres["questions"][q_id]["derniere_revision"] = datetime.now().strftime("%Y-%m-%d")
-            st.session_state.index_question += 1
-            st.rerun()
+                st.session_state.progres["questions"][q_id]["derniere_revision"] = datetime.now().strftime("%Y-%m-%d")
+                st.session_state.index_question += 1
+                st.rerun()
 
-        elif passer:
-            st.session_state.index_question += 1
-            st.rerun()
+            elif passer:
+                st.session_state.index_question += 1
+                st.rerun()
 
 if __name__ == "__main__":
-    main()
+    main() 
