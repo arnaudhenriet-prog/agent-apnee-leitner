@@ -18,13 +18,12 @@ st.markdown("""
     .stApp {
         background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 100%);
         font-family: 'Roboto', sans-serif;
-        color: #01579B;
     }
 
     .main-header {
         text-align: center;
-        color: #006064;
-        margin-bottom: 20px;
+        color: #004D40;
+        margin-bottom: 10px;
         font-size: 2.5em;
         font-weight: 700;
         text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
@@ -34,12 +33,12 @@ st.markdown("""
         text-align: center;
         color: #0277BD;
         margin-bottom: 30px;
-        font-size: 1.3em;
+        font-size: 1.2em;
         font-weight: 300;
     }
 
     .score-box {
-        background: rgba(255, 255, 255, 0.8);
+        background: rgba(255, 255, 255, 0.85);
         border-radius: 15px;
         padding: 15px;
         margin: 20px auto;
@@ -61,9 +60,9 @@ st.markdown("""
 
     .stRadio > div {
         background: rgba(245, 245, 245, 0.7);
-        padding: 15px;
+        padding: 12px;
         border-radius: 10px;
-        margin: 10px 0;
+        margin: 8px 0;
     }
 
     .stButton > button {
@@ -102,6 +101,7 @@ st.markdown("""
         border-radius: 10px;
         margin: 15px 0;
         border-left: 4px solid #FF9800;
+        font-size: 1.1em;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -117,7 +117,6 @@ FAUSSES_REPONSES = {
         "Cela indique que le plongeur a une excellente capacité pulmonaire.",
         "C'est un signe que la pression dans les poumons est trop élevée.",
         "Cela arrive uniquement lors des apnées statiques, pas en dynamique.",
-        "C'est dû à un excès d'oxygène dans le sang (hyperoxie).",
     ],
     "Matériel": [
         "Pour éviter les buées sur le masque en eau froide.",
@@ -198,10 +197,10 @@ def main():
         st.session_state.erreurs = 0
     if "index_question" not in st.session_state:
         st.session_state.index_question = 0
-    if "show_feedback" not in st.session_state:
-        st.session_state.show_feedback = False
-    if "feedback_message" not in st.session_state:
-        st.session_state.feedback_message = ""
+    if "reponse_selectionnee" not in st.session_state:
+        st.session_state.reponse_selectionnee = None
+    if "feedback" not in st.session_state:
+        st.session_state.feedback = ""
 
     # Affichage du score
     st.markdown(f"""
@@ -238,22 +237,21 @@ def main():
         </div>
         """, unsafe_allow_html=True)
 
-        # Sélection de la réponse
-        reponse_utilisateur = st.radio(
-            "Choisis ta réponse:",
+        # Sélection de la réponse (SANS validation automatique)
+        st.session_state.reponse_selectionnee = st.radio(
+            "Sélectionne ta réponse:",
             choix,
             key=f"qcm_{question['id']}",
             label_visibility="collapsed"
         )
 
         # Boutons
-        col1, col2 = st.columns([1, 1])
+        col1, col2, col3 = st.columns([1, 1, 1])
         with col1:
             if st.button("✅ Valider", key=f"valider_{question['id']}"):
-                if reponse_utilisateur == bonne_reponse:
+                if st.session_state.reponse_selectionnee == bonne_reponse:
                     st.session_state.reussites += 1
-                    st.session_state.feedback_message = "✅ Bonne réponse !"
-                    st.session_state.show_feedback = True
+                    st.session_state.feedback = "✅ **Bonne réponse !**"
                     # Mise à jour de la boîte de Leitner
                     q_id = str(question["id"])
                     if q_id not in st.session_state.progres["questions"]:
@@ -264,8 +262,7 @@ def main():
                     st.session_state.progres["questions"][q_id]["derniere_revision"] = date_aujourdhui.strftime("%Y-%m-%d")
                 else:
                     st.session_state.erreurs += 1
-                    st.session_state.feedback_message = f"❌ Mauvaise réponse ! La bonne réponse était: **{bonne_reponse}**"
-                    st.session_state.show_feedback = True
+                    st.session_state.feedback = f"❌ **Mauvaise réponse !**<br>La bonne réponse était: **{bonne_reponse}**"
                     # Mise à jour de la boîte de Leitner
                     q_id = str(question["id"])
                     if q_id not in st.session_state.progres["questions"]:
@@ -283,14 +280,17 @@ def main():
                 st.session_state.index_question += 1
                 st.rerun()
 
+        with col3:
+            st.markdown("")  # Pour aligner les boutons
+
         # Affichage du feedback
-        if st.session_state.show_feedback:
+        if st.session_state.feedback:
             st.markdown(f"""
             <div class="feedback">
-                {st.session_state.feedback_message}
+                {st.session_state.feedback}
             </div>
             """, unsafe_allow_html=True)
-            st.session_state.show_feedback = False
+            st.session_state.feedback = ""
 
     else:
         st.success("🎉 Tu as terminé toutes les questions pour aujourd'hui !")
