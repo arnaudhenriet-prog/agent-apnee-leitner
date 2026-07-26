@@ -3,14 +3,10 @@ import json
 import random
 from datetime import datetime
 
-# --- Configuration de la page ---
-st.set_page_config(
-    page_title="Agent Apnée Leitner",
-    page_icon="🌊",
-    layout="centered"
-)
+# --- Configuration ---
+st.set_page_config(page_title="Agent Apnée Leitner", page_icon="🌊", layout="centered")
 
-# --- Style CSS pour le thème mer/zen ---
+# --- Style CSS ---
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
@@ -19,71 +15,30 @@ st.markdown("""
         font-family: 'Roboto', sans-serif;
         color: #01579B;
     }
-    .main-header {
-        text-align: center;
-        color: #004D40;
-        margin-bottom: 10px;
-        font-size: 2.5em;
-        font-weight: 700;
-    }
-    .sub-header {
-        text-align: center;
-        color: #0277BD;
-        margin-bottom: 30px;
-        font-size: 1.2em;
-        font-weight: 300;
-    }
+    .main-header { text-align: center; color: #004D40; margin-bottom: 10px; font-size: 2.5em; font-weight: 700; }
+    .sub-header { text-align: center; color: #0277BD; margin-bottom: 30px; font-size: 1.2em; font-weight: 300; }
     .score-box {
-        background: rgba(255, 255, 255, 0.85);
-        border-radius: 15px;
-        padding: 15px;
-        margin: 20px auto;
-        text-align: center;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        font-size: 1.3em;
-        color: #004D40;
-        border-left: 5px solid #2196F3;
+        background: rgba(255, 255, 255, 0.85); border-radius: 15px; padding: 15px;
+        margin: 20px auto; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        font-size: 1.3em; color: #004D40; border-left: 5px solid #2196F3;
     }
     .question-box {
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: 15px;
-        padding: 25px;
-        margin: 20px auto;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        border-left: 5px solid #00ACC1;
+        background: rgba(255, 255, 255, 0.9); border-radius: 15px; padding: 25px;
+        margin: 20px auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-left: 5px solid #00ACC1;
     }
-    .stRadio > div {
-        background: rgba(245, 245, 245, 0.7);
-        padding: 12px;
-        border-radius: 10px;
-        margin: 8px 0;
-    }
+    .stRadio > div { background: rgba(245, 245, 245, 0.7); padding: 12px; border-radius: 10px; margin: 8px 0; }
     .stButton > button {
-        background: linear-gradient(to right, #0288D1, #01579B);
-        color: white;
-        border: none;
-        border-radius: 25px;
-        padding: 12px 24px;
-        font-size: 1em;
-        font-weight: 600;
-        margin: 10px;
+        background: linear-gradient(to right, #0288D1, #01579B); color: white; border: none;
+        border-radius: 25px; padding: 12px 24px; font-size: 1em; font-weight: 600; margin: 10px;
         box-shadow: 0 4px 6px rgba(0,0,0,0.2);
     }
     .feedback {
-        background: rgba(255, 255, 255, 0.8);
-        padding: 15px;
-        border-radius: 10px;
-        margin: 15px 0;
-        border-left: 4px solid #FF9800;
-        font-size: 1.1em;
+        background: rgba(255, 255, 255, 0.8); padding: 15px; border-radius: 10px;
+        margin: 15px 0; border-left: 4px solid #FF9800; font-size: 1.1em;
     }
     .success { color: #00695C; font-weight: bold; }
     .error { color: #D32F2F; font-weight: bold; }
-    .box-info {
-        font-size: 0.9em;
-        color: #0277BD;
-        margin-top: 5px;
-    }
+    .box-info { font-size: 0.9em; color: #0277BD; margin-top: 5px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -127,7 +82,6 @@ FAUSSES_REPONSES = {
 
 # --- Fonctions ---
 def charger_questions():
-    """Charge les questions depuis le fichier JSON."""
     with open(NOM_FICHIER_QUESTIONS, "r", encoding="utf-8") as f:
         return json.load(f)["questions"]
 
@@ -137,35 +91,15 @@ def initialiser_boites(questions):
     for question in questions:
         q_id = str(question["id"])
         boites[q_id] = {
-            "boite": question.get("boite", 1),  # Boîte par défaut = 1
+            "boite": question.get("boite", 1),
             "derniere_revision": None
         }
     return boites
 
-def questions_a_reviser(questions, boites):
-    """Sélectionne les questions à réviser aujourd'hui selon la méthode de Leitner."""
-    a_reviser = []
-    date_aujourdhui = datetime.now()
-    for question in questions:
-        q_id = str(question["id"])
-        boite = boites[q_id]["boite"]
-        derniere_revision = boites[q_id]["derniere_revision"]
-
-        # Si jamais révisée ou intervalle écoulé, ajouter à la liste
-        if derniere_revision is None or (
-            (date_aujourdhui - datetime.strptime(derniere_revision, "%Y-%m-%d")).days
-            >= INTERVALLES_BOITES[boite]
-        ):
-            a_reviser.append(question)
-    return a_reviser
-
 def generer_choix(question, questions):
-    """Génère les choix pour un QCM (1 bonne réponse + 2 fausses)."""
     bonne_reponse = question["reponse"][0]
     theme = question["theme"]
     fausses_reponses = []
-
-    # Prendre 2 fausses réponses du même thème si possible
     autres_questions = [q for q in questions if str(q["id"]) != str(question["id"]) and q["theme"] == theme]
     if len(autres_questions) >= 2:
         for _ in range(2):
@@ -173,9 +107,7 @@ def generer_choix(question, questions):
             fausses_reponses.append(q["reponse"][0])
             autres_questions.remove(q)
     else:
-        # Sinon, utiliser des fausses réponses prédéfinies
         fausses_reponses = random.sample(FAUSSES_REPONSES.get(theme, ["Option 1", "Option 2"]), 2)
-
     choix = [bonne_reponse] + fausses_reponses
     random.shuffle(choix)
     return choix, bonne_reponse
@@ -183,18 +115,27 @@ def generer_choix(question, questions):
 # --- Application principale ---
 def main():
     # --- Initialisation de la session ---
-    # Scores (temporaires, réinitialisés à chaque session)
-    if "scores" not in st.session_state:
-        st.session_state.scores = {"reussites": 0, "erreurs": 0}
-
     # Boîtes de Leitner (persistantes pendant la session)
     if "boites" not in st.session_state:
         questions = charger_questions()
         st.session_state.boites = initialiser_boites(questions)
 
-    # Autres variables de session
+    # Questions à réviser (calculées UNE SEULE FOIS au début de la session)
+    if "questions_a_reviser" not in st.session_state:
+        questions = charger_questions()
+        st.session_state.questions_a_reviser = questions  # On commence par toutes les questions
+        # Note: Pour une vraie implémentation de Leitner, il faudrait filtrer ici
+        # Mais comme on ne peut pas sauvegarder entre les sessions, on affiche toutes les questions
+
+    # Scores (temporaires, réinitialisés à chaque session)
+    if "scores" not in st.session_state:
+        st.session_state.scores = {"reussites": 0, "erreurs": 0}
+
+    # Index de la question courante
     if "index_question" not in st.session_state:
         st.session_state.index_question = 0
+
+    # Feedback (affiché pour la question courante)
     if "feedback_message" not in st.session_state:
         st.session_state.feedback_message = ""
 
@@ -202,7 +143,7 @@ def main():
     st.markdown('<div class="main-header">🌊 Agent IA - Sécurité en Apnée</div>', unsafe_allow_html=True)
     st.markdown('<div class="sub-header">Réviser avec la méthode de Leitner</div>', unsafe_allow_html=True)
 
-    # --- Affichage du score (toujours à jour) ---
+    # --- Affichage du score ---
     st.markdown(f"""
     <div class="score-box">
         📊 Score: <span class="success">{st.session_state.scores["reussites"]} ✅</span> |
@@ -217,30 +158,12 @@ def main():
             {st.session_state.feedback_message}
         </div>
         """, unsafe_allow_html=True)
-        st.session_state.feedback_message = ""  # Réinitialiser après affichage
-
-    # --- Chargement des questions ---
-    questions = charger_questions()
-    a_reviser = questions_a_reviser(questions, st.session_state.boites)
-
-    if not a_reviser:
-        st.success("Aucune question à réviser aujourd'hui ! 🎉")
-        st.markdown(f"""
-        <div class="score-box">
-            📊 Score final: <span class="success">{st.session_state.scores["reussites"]} ✅</span> |
-            <span class="error">{st.session_state.scores["erreurs"]} ❌</span>
-        </div>
-        """, unsafe_allow_html=True)
-        st.stop()
-
-    # --- Mélanger les questions à réviser ---
-    random.shuffle(a_reviser)
-    st.info(f"🔹 Tu as **{len(a_reviser)}** questions à réviser aujourd'hui.")
+        st.session_state.feedback_message = ""  # Réinitialiser
 
     # --- Afficher la question actuelle ---
-    if st.session_state.index_question < len(a_reviser):
-        question = a_reviser[st.session_state.index_question]
-        choix, bonne_reponse = generer_choix(question, questions)
+    if st.session_state.index_question < len(st.session_state.questions_a_reviser):
+        question = st.session_state.questions_a_reviser[st.session_state.index_question]
+        choix, bonne_reponse = generer_choix(question, st.session_state.questions_a_reviser)
         q_id = str(question["id"])
 
         # Affichage de la question et de sa boîte
@@ -249,14 +172,12 @@ def main():
         <div class="question-box">
             <h3>🏝️ Thème: {question['theme']}</h3>
             <p><strong>Question:</strong> {question['question']}</p>
-            <p class="box-info">
-                Boîte: {boite_actuelle} |
-                Prochaine révision dans {INTERVALLES_BOITES[boite_actuelle]} jours
-            </p>
+            <p class="box-info">Boîte: {boite_actuelle} |
+            Prochaine révision dans {INTERVALLES_BOITES[boite_actuelle]} jours</p>
         </div>
         """, unsafe_allow_html=True)
 
-        # --- Formulaire pour la réponse (évite le rerun automatique) ---
+        # --- Formulaire pour la réponse ---
         with st.form(key=f"form_{q_id}_{st.session_state.index_question}"):
             reponse_selectionnee = st.radio(
                 "Sélectionne ta réponse:",
@@ -296,11 +217,21 @@ def main():
 
                 # Passer à la question suivante
                 st.session_state.index_question += 1
-                st.rerun()  # Le feedback est déjà stocké dans st.session_state
+                st.rerun()
 
             elif passer:
                 st.session_state.index_question += 1
                 st.rerun()
+
+    else:
+        # Toutes les questions ont été traitées
+        st.success("🎉 Tu as terminé toutes les questions pour aujourd'hui !")
+        st.markdown(f"""
+        <div class="score-box">
+            📊 Score final: <span class="success">{st.session_state.scores["reussites"]} ✅</span> |
+            <span class="error">{st.session_state.scores["erreurs"]} ❌</span>
+        </div>
+        """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
