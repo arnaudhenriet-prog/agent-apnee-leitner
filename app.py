@@ -2,12 +2,11 @@ import streamlit as st
 import json
 import random
 from datetime import datetime
-import os
 
 # --- Configuration ---
 st.set_page_config(page_title="Agent Apnée Leitner", page_icon="🌊", layout="centered")
 
-# --- Style CSS ---
+# --- Style CSS pour le thème mer/zen ---
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
@@ -86,7 +85,6 @@ st.markdown("""
 
 # --- Constantes ---
 NOM_FICHIER_QUESTIONS = "questions.json"
-NOM_FICHIER_LEITNER = "progres_leitner.json"  # Fichier pour sauvegarder les boîtes
 INTERVALLES_BOITES = {1: 1, 2: 2, 3: 4, 4: 8, 5: 16}  # Jours entre révisions
 
 # --- Fausses réponses plausibles ---
@@ -128,28 +126,15 @@ def charger_questions():
     with open(NOM_FICHIER_QUESTIONS, "r", encoding="utf-8") as f:
         return json.load(f)["questions"]
 
-def charger_progres_leitner():
-    """Charge les progrès de Leitner depuis un fichier."""
-    if os.path.exists(NOM_FICHIER_LEITNER):
-        with open(NOM_FICHIER_LEITNER, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return {"questions": {}}
-
-def sauvegarder_progres_leitner(progres):
-    """Sauvegarde les progrès de Leitner dans un fichier."""
-    with open(NOM_FICHIER_LEITNER, "w", encoding="utf-8") as f:
-        json.dump(progres, f, indent=4, ensure_ascii=False)
-
-def questions_a_reviser(questions, progres_leitner):
-    """Sélectionne les questions à réviser aujourd'hui selon la méthode de Leitner."""
+def questions_a_reviser(questions, progres):
     a_reviser = []
     date_aujourdhui = datetime.now()
     for question in questions:
         q_id = str(question["id"])
-        if q_id not in progres_leitner["questions"]:
-            progres_leitner["questions"][q_id] = {"boite": 1, "derniere_revision": None}
-        boite = progres_leitner["questions"][q_id]["boite"]
-        derniere_revision = progres_leitner["questions"][q_id]["derniere_revision"]
+        if q_id not in progres["questions"]:
+            progres["questions"][q_id] = {"boite": 1, "derniere_revision": None}
+        boite = progres["questions"][q_id]["boite"]
+        derniere_revision = progres["questions"][q_id]["derniere_revision"]
         if derniere_revision is None:
             a_reviser.append(question)
         else:
@@ -176,14 +161,14 @@ def generer_choix(question, questions):
 
 # --- Application principale ---
 def main():
-    # Charger les progrès de Leitner (persistants)
-    progres_leitner = charger_progres_leitner()
-
-    # Initialiser les scores de la session (réinitialisés à chaque session)
-    if "reussites" not in st.session_state:
-        st.session_state.reussites = 0
-    if "erreurs" not in st.session_state:
-        st.session_state.erreurs = 0
+    # Initialisation de la session
+    if "progres" not in st.session_state:
+        st.session_state.progres = {
+            "derniere_revision": None,
+            "questions": {},
+            "reussites": 0,
+            "erreurs": 0
+        }
     if "index_question" not in st.session_state:
         st.session_state.index_question = 0
 
@@ -191,23 +176,23 @@ def main():
     st.markdown('<div class="main-header">🌊 Agent IA - Sécurité en Apnée</div>', unsafe_allow_html=True)
     st.markdown('<div class="sub-header">Réviser avec la méthode de Leitner</div>', unsafe_allow_html=True)
 
-    # Affichage du score (scores de la session)
+    # Affichage du score
     st.markdown(f"""
     <div class="score-box">
-        📊 Score: <span class="success">{st.session_state.reussites} ✅</span> |
-        <span class="error">{st.session_state.erreurs} ❌</span>
+        📊 Score: <span class="success">{st.session_state.progres["reussites"]} ✅</span> |
+        <span class="error">{st.session_state.progres["erreurs"]} ❌</span>
     </div>
     """, unsafe_allow_html=True)
 
     questions = charger_questions()
-    a_reviser = questions_a_reviser(questions, progres_leitner)
+    a_reviser = questions_a_reviser(questions, st.session_state.progres)
 
     if not a_reviser:
         st.success("Aucune question à réviser aujourd'hui ! 🎉")
         st.markdown(f"""
         <div class="score-box">
-            📊 Score final: <span class="success">{st.session_state.reussites} ✅</span> |
-            <span class="error">{st.session_state.erreurs} ❌</span>
+            📊 Score final: <span class="success">{st.session_state.progres["reussites"]} ✅</span> |
+            <span class="error">{st.session_state.progres["erreurs"]} ❌</span>
         </div>
         """, unsafe_allow_html=True)
         st.stop()
@@ -223,7 +208,7 @@ def main():
         q_id = str(question["id"])
 
         # Affichage de la question
-        boite_actuelle = progres_leitner["questions"][q_id]["boite"]
+        boite_actuelle = st.session_state.progres["questions"][q_id]["boite"]
         st.markdown(f"""
         <div class="question-box">
             <h3>🏝️ Thème: {question['theme']}</h3>
@@ -250,24 +235,23 @@ def main():
 
             if submitted:
                 if reponse_selectionnee == bonne_reponse:
-                    st.session_state.reussites += 1
+                    st.session_state.progres["reussites"] += 1
                     st.success("✅ **Bonne réponse !**")
                     # Monte d'une boîte (max 5)
-                    progres_leitner["questions"][q_id]["boite"] = min(
-                        progres_leitner["questions"][q_id]["boite"] + 1, 5
+                    st.session_state.progres["questions"][q_id]["boite"] = min(
+                        st.session_state.progres["questions"][q_id]["boite"] + 1, 5
                     )
                 else:
-                    st.session_state.erreurs += 1
+                    st.session_state.progres["erreurs"] += 1
                     st.error("❌ **Mauvaise réponse !**")
                     st.write(f"**La bonne réponse était :** **{bonne_reponse}**")
                     # Descend d'une boîte (min 1)
-                    progres_leitner["questions"][q_id]["boite"] = max(
-                        progres_leitner["questions"][q_id]["boite"] - 1, 1
+                    st.session_state.progres["questions"][q_id]["boite"] = max(
+                        st.session_state.progres["questions"][q_id]["boite"] - 1, 1
                     )
 
                 # Mise à jour de la date de révision
-                progres_leitner["questions"][q_id]["derniere_revision"] = datetime.now().strftime("%Y-%m-%d")
-                sauvegarder_progres_leitner(progres_leitner)  # Sauvegarde dans le fichier
+                st.session_state.progres["questions"][q_id]["derniere_revision"] = datetime.now().strftime("%Y-%m-%d")
                 st.session_state.index_question += 1
                 st.rerun()
 
