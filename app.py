@@ -113,11 +113,14 @@ def main():
     if "erreurs" not in st.session_state:
         st.session_state.erreurs = 0
 
+    # Afficher le compteur en haut de la page
+    st.write(f"📊 **Bilan actuel :** {st.session_state.reussites} ✅ | {st.session_state.erreurs} ❌")
+
     # Sélectionner les questions à réviser
     a_reviser = questions_a_reviser(questions, st.session_state.progres, date_aujourdhui)
     if not a_reviser:
         st.success("Aucune question à réviser aujourd'hui ! 🎉")
-        st.write(f"📊 **Bilan :** {st.session_state.reussites} ✅ | {st.session_state.erreurs} ❌")
+        st.write(f"📊 **Bilan final :** {st.session_state.reussites} ✅ | {st.session_state.erreurs} ❌")
         return
 
     random.shuffle(a_reviser)
@@ -135,44 +138,39 @@ def main():
         st.subheader(f"Thème: {question['theme']} (Boîte {question['boite']})")
         st.write(f"**Question:** {question['question']}")
 
-        # Afficher les choix sous forme de boutons radio
-        reponse_utilisateur = st.radio(
-            "Choisis la bonne réponse :",
-            choix,
-            key=f"qcm_{question['id']}"
-        )
+        # Afficher les choix sous forme de boutons
+        for i, option in enumerate(choix):
+            if st.button(f"{i+1}. {option}", key=f"option_{i}_{question['id']}"):
+                if option == bonne_reponse:
+                    st.success("✅ **Bonne réponse !**")
+                    st.session_state.reussites += 1
 
-        if st.button("Valider"):
-            if reponse_utilisateur == bonne_reponse:
-                st.success("✅ **Bonne réponse !**")
-                st.session_state.reussites += 1
+                    # Mettre à jour la boîte de Leitner
+                    q_id = str(question["id"])
+                    if q_id not in st.session_state.progres["questions"]:
+                        st.session_state.progres["questions"][q_id] = {"boite": 1, "derniere_revision": None}
+                    st.session_state.progres["questions"][q_id]["boite"] = min(
+                        st.session_state.progres["questions"][q_id]["boite"] + 1, 5
+                    )
+                    st.session_state.progres["questions"][q_id]["derniere_revision"] = date_aujourdhui.strftime("%Y-%m-%d")
+                    st.session_state.progres["derniere_revision"] = date_aujourdhui.strftime("%Y-%m-%d")
+                else:
+                    st.error(f"❌ **Mauvaise réponse !**")
+                    st.write(f"**La bonne réponse était :** **{bonne_reponse}**")
+                    st.session_state.erreurs += 1
 
-                # Mettre à jour la boîte de Leitner
-                q_id = str(question["id"])
-                if q_id not in st.session_state.progres["questions"]:
-                    st.session_state.progres["questions"][q_id] = {"boite": 1, "derniere_revision": None}
-                st.session_state.progres["questions"][q_id]["boite"] = min(
-                    st.session_state.progres["questions"][q_id]["boite"] + 1, 5
-                )
-                st.session_state.progres["questions"][q_id]["derniere_revision"] = date_aujourdhui.strftime("%Y-%m-%d")
-                st.session_state.progres["derniere_revision"] = date_aujourdhui.strftime("%Y-%m-%d")
-            else:
-                st.error(f"❌ **Mauvaise réponse !**")
-                st.write(f"**La bonne réponse était :** **{bonne_reponse}**")
-                st.session_state.erreurs += 1
+                    # Mettre à jour la boîte de Leitner (redescend d'une boîte)
+                    q_id = str(question["id"])
+                    if q_id not in st.session_state.progres["questions"]:
+                        st.session_state.progres["questions"][q_id] = {"boite": 1, "derniere_revision": None}
+                    st.session_state.progres["questions"][q_id]["boite"] = max(
+                        st.session_state.progres["questions"][q_id]["boite"] - 1, 1
+                    )
+                    st.session_state.progres["questions"][q_id]["derniere_revision"] = date_aujourdhui.strftime("%Y-%m-%d")
 
-                # Mettre à jour la boîte de Leitner (redescend d'une boîte)
-                q_id = str(question["id"])
-                if q_id not in st.session_state.progres["questions"]:
-                    st.session_state.progres["questions"][q_id] = {"boite": 1, "derniere_revision": None}
-                st.session_state.progres["questions"][q_id]["boite"] = max(
-                    st.session_state.progres["questions"][q_id]["boite"] - 1, 1
-                )
-                st.session_state.progres["questions"][q_id]["derniere_revision"] = date_aujourdhui.strftime("%Y-%m-%d")
-
-            # Passer à la question suivante
-            st.session_state.index_question += 1
-            st.rerun()
+                # Passer à la question suivante après un délai
+                st.session_state.index_question += 1
+                st.rerun()
 
         if st.button("Passer cette question"):
             st.session_state.index_question += 1
