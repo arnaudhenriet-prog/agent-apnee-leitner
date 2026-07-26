@@ -6,7 +6,7 @@ from datetime import datetime
 # --- Configuration ---
 st.set_page_config(page_title="Agent Apnée Leitner", page_icon="🌊", layout="centered")
 
-# --- Style CSS pour le thème mer/zen ---
+# --- Style CSS ---
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
@@ -162,11 +162,18 @@ def generer_choix(question, questions):
 def main():
     # Initialisation de la session
     if "progres" not in st.session_state:
-        st.session_state.progres = {"derniere_revision": None, "questions": {}, "reussites": 0, "erreurs": 0}
+        st.session_state.progres = {
+            "derniere_revision": None,
+            "questions": {},
+            "reussites": 0,
+            "erreurs": 0
+        }
     if "index_question" not in st.session_state:
         st.session_state.index_question = 0
-    if "feedback" not in st.session_state:
-        st.session_state.feedback = ""
+    if "show_feedback" not in st.session_state:
+        st.session_state.show_feedback = False
+    if "feedback_message" not in st.session_state:
+        st.session_state.feedback_message = ""
 
     # En-tête
     st.markdown('<div class="main-header">🌊 Agent IA - Sécurité en Apnée</div>', unsafe_allow_html=True)
@@ -207,19 +214,19 @@ def main():
         <div class="question-box">
             <h3>🏝️ Thème: {question['theme']}</h3>
             <p><strong>Question:</strong> {question['question']}</p>
-            <p class="box-info">Boîte de Leitner: {question.get('boite', 1)} |
-            Intervalle: {INTERVALLES_BOITES.get(question.get('boite', 1), 1)} jours</p>
+            <p class="box-info">Boîte: {st.session_state.progres["questions"].get(str(question["id"]), {}).get("boite", 1)} |
+            Prochaine révision dans {INTERVALLES_BOITES.get(st.session_state.progres["questions"].get(str(question["id"]), {}).get("boite", 1), 1)} jours</p>
         </div>
         """, unsafe_allow_html=True)
 
         # Affichage du feedback si présent
-        if st.session_state.feedback:
+        if st.session_state.show_feedback:
             st.markdown(f"""
             <div class="feedback">
-                {st.session_state.feedback}
+                {st.session_state.feedback_message}
             </div>
             """, unsafe_allow_html=True)
-            st.session_state.feedback = ""
+            st.session_state.show_feedback = False
 
         # Utilisation d'un formulaire pour éviter le rerun automatique
         with st.form(key=f"form_{question['id']}_{st.session_state.index_question}"):
@@ -239,18 +246,18 @@ def main():
             if submitted:
                 q_id = str(question["id"])
                 if q_id not in st.session_state.progres["questions"]:
-                    st.session_state.progres["questions"][q_id] = {"boite": question.get("boite", 1), "derniere_revision": None}
+                    st.session_state.progres["questions"][q_id] = {"boite": 1, "derniere_revision": None}
 
                 if reponse_selectionnee == bonne_reponse:
                     st.session_state.progres["reussites"] += 1
-                    st.session_state.feedback = "✅ **Bonne réponse !**"
+                    st.session_state.feedback_message = "✅ **Bonne réponse !**"
                     # Monte d'une boîte (max 5)
                     st.session_state.progres["questions"][q_id]["boite"] = min(
                         st.session_state.progres["questions"][q_id]["boite"] + 1, 5
                     )
                 else:
                     st.session_state.progres["erreurs"] += 1
-                    st.session_state.feedback = f"❌ **Mauvaise réponse !**<br>La bonne réponse était: **{bonne_reponse}**"
+                    st.session_state.feedback_message = f"❌ **Mauvaise réponse !**<br>La bonne réponse était: **{bonne_reponse}**"
                     # Descend d'une boîte (min 1)
                     st.session_state.progres["questions"][q_id]["boite"] = max(
                         st.session_state.progres["questions"][q_id]["boite"] - 1, 1
@@ -258,6 +265,7 @@ def main():
 
                 # Mise à jour de la date de révision
                 st.session_state.progres["questions"][q_id]["derniere_revision"] = datetime.now().strftime("%Y-%m-%d")
+                st.session_state.show_feedback = True
                 st.session_state.index_question += 1
                 st.rerun()
 
