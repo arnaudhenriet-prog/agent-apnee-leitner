@@ -167,8 +167,6 @@ def main():
         st.session_state.erreurs = 0
     if "index_question" not in st.session_state:
         st.session_state.index_question = 0
-    if "feedback" not in st.session_state:
-        st.session_state.feedback = ""
 
     # En-tête
     st.markdown('<div class="main-header">🌊 Agent IA - Sécurité en Apnée</div>', unsafe_allow_html=True)
@@ -195,8 +193,11 @@ def main():
         """, unsafe_allow_html=True)
         return
 
+    # Mélanger les questions
     random.shuffle(a_reviser)
+    st.info(f"🔹 Tu as **{len(a_reviser)}** questions à réviser aujourd'hui.")
 
+    # Afficher la question actuelle
     if st.session_state.index_question < len(a_reviser):
         question = a_reviser[st.session_state.index_question]
         choix, bonne_reponse = generer_choix(question, questions)
@@ -249,6 +250,7 @@ def main():
                 )
             st.session_state.progres["questions"][q_id]["derniere_revision"] = datetime.now().strftime("%Y-%m-%d")
 
+            # Passer à la question suivante
             st.session_state.index_question += 1
             st.rerun()
 
