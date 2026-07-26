@@ -182,8 +182,6 @@ def main():
         st.session_state.erreurs = 0
     if "index_question" not in st.session_state:
         st.session_state.index_question = 0
-    if "feedback" not in st.session_state:
-        st.session_state.feedback = ""
 
     # En-tête
     st.markdown('<div class="main-header">🌊 Agent IA - Sécurité en Apnée</div>', unsafe_allow_html=True)
@@ -212,7 +210,6 @@ def main():
         return
 
     random.shuffle(a_reviser)
-    st.info(f"🔹 Tu as **{len(a_reviser)}** questions à réviser aujourd'hui.")
 
     if st.session_state.index_question < len(a_reviser):
         question = a_reviser[st.session_state.index_question]
@@ -245,40 +242,28 @@ def main():
         if submitted:
             if reponse_selectionnee == bonne_reponse:
                 st.session_state.reussites += 1
-                st.session_state.feedback = "✅ **Bonne réponse !**"
-                # Mise à jour de la boîte de Leitner
-                q_id = str(question["id"])
-                if q_id not in st.session_state.progres["questions"]:
-                    st.session_state.progres["questions"][q_id] = {"boite": 1, "derniere_revision": None}
+                st.success("✅ **Bonne réponse !**")
+            else:
+                st.session_state.erreurs += 1
+                st.error(f"❌ **Mauvaise réponse !**")
+                st.markdown(f"**La bonne réponse était :** **{bonne_reponse}**")
+
+            # Mise à jour de la boîte de Leitner
+            q_id = str(question["id"])
+            if q_id not in st.session_state.progres["questions"]:
+                st.session_state.progres["questions"][q_id] = {"boite": 1, "derniere_revision": None}
+
+            if reponse_selectionnee == bonne_reponse:
                 st.session_state.progres["questions"][q_id]["boite"] = min(
                     st.session_state.progres["questions"][q_id]["boite"] + 1, 5
                 )
-                st.session_state.progres["questions"][q_id]["derniere_revision"] = date_aujourdhui.strftime("%Y-%m-%d")
-            elif passer:
-                # Ne rien faire, juste passer
-                pass
             else:
-                st.session_state.erreurs += 1
-                st.session_state.feedback = f"❌ **Mauvaise réponse !**<br>La bonne réponse était: **{bonne_reponse}**"
-                # Mise à jour de la boîte de Leitner
-                q_id = str(question["id"])
-                if q_id not in st.session_state.progres["questions"]:
-                    st.session_state.progres["questions"][q_id] = {"boite": 1, "derniere_revision": None}
                 st.session_state.progres["questions"][q_id]["boite"] = max(
                     st.session_state.progres["questions"][q_id]["boite"] - 1, 1
                 )
-                st.session_state.progres["questions"][q_id]["derniere_revision"] = date_aujourdhui.strftime("%Y-%m-%d")
-
-            # Affichage du feedback
-            if st.session_state.feedback:
-                st.markdown(f"""
-                <div class="feedback">
-                    {st.session_state.feedback}
-                </div>
-                """, unsafe_allow_html=True)
+            st.session_state.progres["questions"][q_id]["derniere_revision"] = date_aujourdhui.strftime("%Y-%m-%d")
 
             st.session_state.index_question += 1
-            st.session_state.feedback = ""
             st.rerun()
 
         elif passer:
