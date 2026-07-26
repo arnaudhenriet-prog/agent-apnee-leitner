@@ -2,7 +2,6 @@ import streamlit as st
 import json
 import random
 from datetime import datetime
-from urllib.parse import urlencode
 
 # --- Configuration de la page ---
 st.set_page_config(
@@ -157,30 +156,15 @@ def generer_choix(question, questions):
     random.shuffle(choix)
     return choix, bonne_reponse
 
-def update_query_params(reussites, erreurs, index, progres_json):
-    params = {
-        "reussites": reussites,
-        "erreurs": erreurs,
-        "index": index,
-        "progres": progres_json
-    }
-    query_string = urlencode(params)
-    st.experimental_set_query_params(**params)
-
 # --- Application principale ---
 def main():
-    # Initialisation des paramètres depuis l'URL
-    query_params = st.experimental_get_query_params()
-    reussites = int(query_params.get("reussites", [0])[0])
-    erreurs = int(query_params.get("erreurs", [0])[0])
-    index_question = int(query_params.get("index", [0])[0])
-    progres_json = query_params.get("progres", [None])[0]
-
-    # Initialisation du progrès
-    if progres_json:
-        progres = json.loads(progres_json)
-    else:
-        progres = {"derniere_revision": None, "questions": {}, "reussites": 0, "erreurs": 0}
+    # Initialisation de la session
+    if "progres" not in st.session_state:
+        st.session_state.progres = {"derniere_revision": None, "questions": {}, "reussites": 0, "erreurs": 0}
+    if "index_question" not in st.session_state:
+        st.session_state.index_question = 0
+    if "feedback" not in st.session_state:
+        st.session_state.feedback = ""
 
     # En-tête
     st.markdown('<div class="main-header">🌊 Agent IA - Sécurité en Apnée</div>', unsafe_allow_html=True)
@@ -189,96 +173,88 @@ def main():
     # Affichage du score
     st.markdown(f"""
     <div class="score-box">
-        📊 Score: <span class="success">{reussites} ✅</span> |
-        <span class="error">{erreurs} ❌</span>
+        📊 Score: <span class="success">{st.session_state.progres["reussites"]} ✅</span> |
+        <span class="error">{st.session_state.progres["erreurs"]} ❌</span>
     </div>
     """, unsafe_allow_html=True)
 
     questions = charger_questions()
-    a_reviser = questions_a_reviser(questions, progres)
+    a_reviser = questions_a_reviser(questions, st.session_state.progres)
 
     if not a_reviser:
         st.success("Aucune question à réviser aujourd'hui ! 🎉")
         st.markdown(f"""
         <div class="score-box">
-            📊 Score final: <span class="success">{reussites} ✅</span> |
-            <span class="error">{erreurs} ❌</span>
+            📊 Score final: <span class="success">{st.session_state.progres["reussites"]} ✅</span> |
+            <span class="error">{st.session_state.progres["erreurs"]} ❌</span>
         </div>
         """, unsafe_allow_html=True)
-        return
+        st.stop()
 
     # Mélanger les questions
     random.shuffle(a_reviser)
     st.info(f"🔹 Tu as **{len(a_reviser)}** questions à réviser aujourd'hui.")
 
     # Afficher la question actuelle
-    if index_question < len(a_reviser):
-        question = a_reviser[index_question]
-        choix, bonne_reponse = generer_choix(question, questions)
+    question = a_reviser[st.session_state.index_question]
+    choix, bonne_reponse = generer_choix(question, questions)
 
-        # Affichage de la question
+    # Affichage de la question
+    st.markdown(f"""
+    <div class="question-box">
+        <h3>🏝️ Thème: {question['theme']} (Boîte {question['boite']})</h3>
+        <p><strong>Question:</strong> {question['question']}</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Affichage du feedback si présent
+    if st.session_state.feedback:
         st.markdown(f"""
-        <div class="question-box">
-            <h3>🏝️ Thème: {question['theme']} (Boîte {question['boite']})</h3>
-            <p><strong>Question:</strong> {question['question']}</p>
+        <div class="feedback">
+            {st.session_state.feedback}
         </div>
         """, unsafe_allow_html=True)
 
-        # Utilisation d'un formulaire pour éviter le rerun automatique
-        with st.form(key=f"form_{question['id']}_{index_question}"):
-            reponse_selectionnee = st.radio(
-                "Sélectionne ta réponse:",
-                choix,
-                key=f"qcm_{question['id']}",
-                label_visibility="collapsed"
-            )
+    # Utilisation d'un formulaire pour éviter le rerun automatique
+    with st.form(key=f"form_{question['id']}_{st.session_state.index_question}"):
+        reponse_selectionnee = st.radio(
+            "Sélectionne ta réponse:",
+            choix,
+            key=f"qcm_{question['id']}",
+            label_visibility="collapsed"
+        )
 
-            col1, col2 = st.columns([1, 1])
-            with col1:
-                submitted = st.form_submit_button("✅ Valider")
-            with col2:
-                passer = st.form_submit_button("⏭️ Passer")
+        col1, col2 = st.columns([1, 1])
+        with col1:
+            submitted = st.form_submit_button("✅ Valider")
+        with col2:
+            passer = st.form_submit_button("⏭️ Passer")
 
-        # Traitement après soumission du formulaire
         if submitted:
             q_id = str(question["id"])
-            if q_id not in progres["questions"]:
-                progres["questions"][q_id] = {"boite": 1, "derniere_revision": None}
+            if q_id not in st.session_state.progres["questions"]:
+                st.session_state.progres["questions"][q_id] = {"boite": 1, "derniere_revision": None}
 
             if reponse_selectionnee == bonne_reponse:
-                reussites += 1
-                st.success("✅ **Bonne réponse !**")
-                progres["questions"][q_id]["boite"] = min(
-                    progres["questions"][q_id]["boite"] + 1, 5
+                st.session_state.progres["reussites"] += 1
+                st.session_state.feedback = "✅ **Bonne réponse !**"
+                st.session_state.progres["questions"][q_id]["boite"] = min(
+                    st.session_state.progres["questions"][q_id]["boite"] + 1, 5
                 )
             else:
-                erreurs += 1
-                st.error("❌ **Mauvaise réponse !**")
-                st.markdown(f"**La bonne réponse était :** **{bonne_reponse}**")
-                progres["questions"][q_id]["boite"] = max(
-                    progres["questions"][q_id]["boite"] - 1, 1
+                st.session_state.progres["erreurs"] += 1
+                st.session_state.feedback = f"❌ **Mauvaise réponse !**<br>La bonne réponse était: **{bonne_reponse}**"
+                st.session_state.progres["questions"][q_id]["boite"] = max(
+                    st.session_state.progres["questions"][q_id]["boite"] - 1, 1
                 )
 
-            progres["questions"][q_id]["derniere_revision"] = datetime.now().strftime("%Y-%m-%d")
-            progres["reussites"] = reussites
-            progres["erreurs"] = erreurs
-
-            # Mettre à jour les paramètres d'URL
-            update_query_params(reussites, erreurs, index_question + 1, json.dumps(progres))
+            st.session_state.progres["questions"][q_id]["derniere_revision"] = datetime.now().strftime("%Y-%m-%d")
+            st.session_state.index_question += 1
             st.rerun()
 
         elif passer:
-            update_query_params(reussites, erreurs, index_question + 1, json.dumps(progres))
+            st.session_state.index_question += 1
             st.rerun()
-
-    else:
-        st.success("🎉 Tu as terminé toutes les questions pour aujourd'hui !")
-        st.markdown(f"""
-        <div class="score-box">
-            📊 Score final: <span class="success">{reussites} ✅</span> |
-            <span class="error">{erreurs} ❌</span>
-        </div>
-        """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
