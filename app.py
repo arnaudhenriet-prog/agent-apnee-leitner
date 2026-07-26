@@ -15,14 +15,12 @@ st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
 
-    /* Fond et police */
     .stApp {
         background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 100%);
         font-family: 'Roboto', sans-serif;
         color: #01579B;
     }
 
-    /* En-tête */
     .main-header {
         text-align: center;
         color: #004D40;
@@ -40,7 +38,6 @@ st.markdown("""
         font-weight: 300;
     }
 
-    /* Score */
     .score-box {
         background: rgba(255, 255, 255, 0.85);
         border-radius: 15px;
@@ -53,7 +50,6 @@ st.markdown("""
         border-left: 5px solid #2196F3;
     }
 
-    /* Questions */
     .question-box {
         background: rgba(255, 255, 255, 0.9);
         border-radius: 15px;
@@ -63,7 +59,6 @@ st.markdown("""
         border-left: 5px solid #00ACC1;
     }
 
-    /* Radio buttons */
     .stRadio > div {
         background: rgba(245, 245, 245, 0.7);
         padding: 12px;
@@ -71,7 +66,6 @@ st.markdown("""
         margin: 8px 0;
     }
 
-    /* Boutons */
     .stButton > button {
         background: linear-gradient(to right, #0288D1, #01579B);
         color: white;
@@ -90,7 +84,6 @@ st.markdown("""
         box-shadow: 0 6px 10px rgba(0,0,0,0.3);
     }
 
-    /* Feedback */
     .feedback {
         background: rgba(255, 255, 255, 0.8);
         padding: 15px;
@@ -102,9 +95,6 @@ st.markdown("""
 
     .success { color: #00695C; font-weight: bold; }
     .error { color: #D32F2F; font-weight: bold; }
-
-    /* Désactiver le rerun automatique des radio buttons */
-    .stRadio { pointer-events: auto !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -194,8 +184,6 @@ def main():
         st.session_state.index_question = 0
     if "feedback" not in st.session_state:
         st.session_state.feedback = ""
-    if "submitted" not in st.session_state:
-        st.session_state.submitted = False
 
     # En-tête
     st.markdown('<div class="main-header">🌊 Agent IA - Sécurité en Apnée</div>', unsafe_allow_html=True)
@@ -251,9 +239,7 @@ def main():
             with col1:
                 submitted = st.form_submit_button("✅ Valider")
             with col2:
-                if st.button("⏭️ Passer"):
-                    st.session_state.index_question += 1
-                    st.rerun()
+                passer = st.form_submit_button("⏭️ Passer")
 
         # Traitement après soumission du formulaire
         if submitted:
@@ -268,6 +254,9 @@ def main():
                     st.session_state.progres["questions"][q_id]["boite"] + 1, 5
                 )
                 st.session_state.progres["questions"][q_id]["derniere_revision"] = date_aujourdhui.strftime("%Y-%m-%d")
+            elif passer:
+                # Ne rien faire, juste passer
+                pass
             else:
                 st.session_state.erreurs += 1
                 st.session_state.feedback = f"❌ **Mauvaise réponse !**<br>La bonne réponse était: **{bonne_reponse}**"
@@ -281,12 +270,18 @@ def main():
                 st.session_state.progres["questions"][q_id]["derniere_revision"] = date_aujourdhui.strftime("%Y-%m-%d")
 
             # Affichage du feedback
-            st.markdown(f"""
-            <div class="feedback">
-                {st.session_state.feedback}
-            </div>
-            """, unsafe_allow_html=True)
+            if st.session_state.feedback:
+                st.markdown(f"""
+                <div class="feedback">
+                    {st.session_state.feedback}
+                </div>
+                """, unsafe_allow_html=True)
 
+            st.session_state.index_question += 1
+            st.session_state.feedback = ""
+            st.rerun()
+
+        elif passer:
             st.session_state.index_question += 1
             st.rerun()
 
