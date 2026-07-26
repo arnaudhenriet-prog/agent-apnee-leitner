@@ -163,6 +163,10 @@ def main():
         st.session_state.progres = {"derniere_revision": None, "questions": {}, "reussites": 0, "erreurs": 0}
     if "index_question" not in st.session_state:
         st.session_state.index_question = 0
+    if "show_feedback" not in st.session_state:
+        st.session_state.show_feedback = False
+    if "feedback_message" not in st.session_state:
+        st.session_state.feedback_message = ""
 
     # En-tête
     st.markdown('<div class="main-header">🌊 Agent IA - Sécurité en Apnée</div>', unsafe_allow_html=True)
@@ -206,6 +210,15 @@ def main():
         </div>
         """, unsafe_allow_html=True)
 
+        # Affichage du feedback si présent
+        if st.session_state.show_feedback:
+            st.markdown(f"""
+            <div class="feedback">
+                {st.session_state.feedback_message}
+            </div>
+            """, unsafe_allow_html=True)
+            st.session_state.show_feedback = False
+
         # Utilisation d'un formulaire pour éviter le rerun automatique
         with st.form(key=f"form_{question['id']}_{st.session_state.index_question}"):
             reponse_selectionnee = st.radio(
@@ -228,19 +241,20 @@ def main():
 
                 if reponse_selectionnee == bonne_reponse:
                     st.session_state.progres["reussites"] += 1
-                    st.success("✅ **Bonne réponse !**")
-                    st.session_state.progres["questions"][q_id]["boite"] = min(
-                        st.session_state.progres["questions"][q_id]["boite"] + 1, 5
-                    )
+                    st.session_state.feedback_message = "✅ **Bonne réponse !**"
                 else:
                     st.session_state.progres["erreurs"] += 1
-                    st.error("❌ **Mauvaise réponse !**")
-                    st.write(f"**La bonne réponse était :** **{bonne_reponse}**")
+                    st.session_state.feedback_message = f"❌ **Mauvaise réponse !**<br>La bonne réponse était: **{bonne_reponse}**"
                     st.session_state.progres["questions"][q_id]["boite"] = max(
-                        st.session_state.progres["questions"][q_id]["boite"] - 1, 1
+                        st.session_state.progres["questions"][q_id].get("boite", 1) - 1, 1
                     )
 
+                st.session_state.progres["questions"][q_id]["boite"] = min(
+                    st.session_state.progres["questions"][q_id].get("boite", 1) + 1, 5
+                ) if reponse_selectionnee == bonne_reponse else st.session_state.progres["questions"][q_id].get("boite", 1)
+
                 st.session_state.progres["questions"][q_id]["derniere_revision"] = datetime.now().strftime("%Y-%m-%d")
+                st.session_state.show_feedback = True
                 st.session_state.index_question += 1
                 st.rerun()
 
@@ -249,4 +263,4 @@ def main():
                 st.rerun()
 
 if __name__ == "__main__":
-    main() 
+    main()
