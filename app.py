@@ -14,22 +14,18 @@ st.set_page_config(
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
-
     .stApp {
         background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 100%);
         font-family: 'Roboto', sans-serif;
         color: #01579B;
     }
-
     .main-header {
         text-align: center;
         color: #004D40;
         margin-bottom: 10px;
         font-size: 2.5em;
         font-weight: 700;
-        text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
     }
-
     .sub-header {
         text-align: center;
         color: #0277BD;
@@ -37,7 +33,6 @@ st.markdown("""
         font-size: 1.2em;
         font-weight: 300;
     }
-
     .score-box {
         background: rgba(255, 255, 255, 0.85);
         border-radius: 15px;
@@ -49,7 +44,6 @@ st.markdown("""
         color: #004D40;
         border-left: 5px solid #2196F3;
     }
-
     .question-box {
         background: rgba(255, 255, 255, 0.9);
         border-radius: 15px;
@@ -58,14 +52,12 @@ st.markdown("""
         box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         border-left: 5px solid #00ACC1;
     }
-
     .stRadio > div {
         background: rgba(245, 245, 245, 0.7);
         padding: 12px;
         border-radius: 10px;
         margin: 8px 0;
     }
-
     .stButton > button {
         background: linear-gradient(to right, #0288D1, #01579B);
         color: white;
@@ -76,14 +68,7 @@ st.markdown("""
         font-weight: 600;
         margin: 10px;
         box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-        transition: all 0.3s;
     }
-
-    .stButton > button:hover {
-        transform: scale(1.05);
-        box-shadow: 0 6px 10px rgba(0,0,0,0.3);
-    }
-
     .feedback {
         background: rgba(255, 255, 255, 0.8);
         padding: 15px;
@@ -92,7 +77,6 @@ st.markdown("""
         border-left: 4px solid #FF9800;
         font-size: 1.1em;
     }
-
     .success { color: #00695C; font-weight: bold; }
     .error { color: #D32F2F; font-weight: bold; }
 </style>
@@ -141,8 +125,9 @@ def charger_questions():
     with open(NOM_FICHIER_QUESTIONS, "r", encoding="utf-8") as f:
         return json.load(f)["questions"]
 
-def questions_a_reviser(questions, progres, date_aujourdhui):
+def questions_a_reviser(questions, progres):
     a_reviser = []
+    date_aujourdhui = datetime.now()
     for question in questions:
         q_id = str(question["id"])
         boite = progres["questions"].get(q_id, {}).get("boite", 1)
@@ -182,6 +167,8 @@ def main():
         st.session_state.erreurs = 0
     if "index_question" not in st.session_state:
         st.session_state.index_question = 0
+    if "feedback" not in st.session_state:
+        st.session_state.feedback = ""
 
     # En-tête
     st.markdown('<div class="main-header">🌊 Agent IA - Sécurité en Apnée</div>', unsafe_allow_html=True)
@@ -196,8 +183,7 @@ def main():
     """, unsafe_allow_html=True)
 
     questions = charger_questions()
-    date_aujourdhui = datetime.now()
-    a_reviser = questions_a_reviser(questions, st.session_state.progres, date_aujourdhui)
+    a_reviser = questions_a_reviser(questions, st.session_state.progres)
 
     if not a_reviser:
         st.success("Aucune question à réviser aujourd'hui ! 🎉")
@@ -245,7 +231,7 @@ def main():
                 st.success("✅ **Bonne réponse !**")
             else:
                 st.session_state.erreurs += 1
-                st.error(f"❌ **Mauvaise réponse !**")
+                st.error("❌ **Mauvaise réponse !**")
                 st.markdown(f"**La bonne réponse était :** **{bonne_reponse}**")
 
             # Mise à jour de la boîte de Leitner
@@ -261,7 +247,7 @@ def main():
                 st.session_state.progres["questions"][q_id]["boite"] = max(
                     st.session_state.progres["questions"][q_id]["boite"] - 1, 1
                 )
-            st.session_state.progres["questions"][q_id]["derniere_revision"] = date_aujourdhui.strftime("%Y-%m-%d")
+            st.session_state.progres["questions"][q_id]["derniere_revision"] = datetime.now().strftime("%Y-%m-%d")
 
             st.session_state.index_question += 1
             st.rerun()
